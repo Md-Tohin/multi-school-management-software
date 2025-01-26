@@ -24,6 +24,7 @@ import EventIcon from "@mui/icons-material/Event";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
+import HomeIcon from '@mui/icons-material/Home';
 // import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
@@ -121,6 +122,8 @@ export default function Teacher() {
   const navigate = useNavigate();
 
   const navArr = [
+    { link: "/", component: "Home", icon: HomeIcon },
+    { link: "/teacher", component: "Your Details", icon: DashboardCustomizeIcon },
     { link: "/teacher", component: "Your Details", icon: DashboardCustomizeIcon },
     { link: "/teacher/schedule", component: "Schedule", icon: EventIcon },
     {

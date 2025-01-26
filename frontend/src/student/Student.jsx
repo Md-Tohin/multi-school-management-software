@@ -20,15 +20,11 @@ import ListItemText from "@mui/material/ListItemText";
 
 //  ICONS
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
-import PeopleIcon from "@mui/icons-material/People";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import EventIcon from "@mui/icons-material/Event";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import SubjectIcon from "@mui/icons-material/Subject";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
-import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-// import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/Home';
 // import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
@@ -111,7 +107,7 @@ const Drawer = styled(MuiDrawer, {
   ],
 }));
 
-export default function School() {
+export default function Student() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -126,24 +122,21 @@ export default function School() {
   const navigate = useNavigate();
 
   const navArr = [
-    { link: "/school", component: "Dashboard", icon: DashboardCustomizeIcon },
-    { link: "/school/class", component: "Class", icon: FormatListNumberedIcon },
-    { link: "/school/subjects", component: "Subjects", icon: SubjectIcon },
-    { link: "/school/students", component: "Students", icon: PeopleIcon },
-    { link: "/school/teachers", component: "Teachers", icon: PeopleAltIcon },
-    { link: "/school/schedule", component: "Schedule", icon: EventIcon },
+    { link: "/", component: "Home", icon: HomeIcon },
+    { link: "/student", component: "Your Details", icon: DashboardCustomizeIcon },
+    { link: "/student/schedule", component: "Schedule", icon: EventIcon },
     {
-      link: "/school/attendance",
+      link: "/student/attendance",
       component: "Attendande",
       icon: RecentActorsIcon,
     },
     {
-      link: "/school/examinations",
+      link: "/student/examinations",
       component: "Examinations",
       icon: ExplicitIcon,
     },
     {
-      link: "/school/notice",
+      link: "/student/notice",
       component: "Notice",
       icon: NotificationsIcon,
     },
