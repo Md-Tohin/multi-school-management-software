@@ -6,7 +6,9 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 //  ROUTERS IMPORT
-const schoolRouter = require('./routers/school.router')
+// const schoolRouter = require('./routers/school.router')
+const classRouter = require('./routers/class.router.js')
+
 
 const app = express();
 app.use(express.json());
