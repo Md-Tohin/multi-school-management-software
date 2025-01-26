@@ -1,16 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import School from './school/School'
-import Testing from './Testing'
-import Attendance from './school/attendance/Attendance'
-import Class from './school/class/Class'
-import Dashboard from './school/dashboard/Dashboard'
-import Examinations from './school/examinations/Examinations'
-import Notice from './school/notice/Notice'
-import Schedule from './school/schedule/Schedule'
-import Students from './school/students/Students'
-import Subjects from './school/subjects/Subjects'
-import Teachers from './school/teachers/Teachers'
+import Attendance from './school/components/attendance/Attendance'
+import Class from './school/components/class/Class'
+import Dashboard from './school/components/dashboard/Dashboard'
+import Examinations from './school/components/examinations/Examinations'
+import Notice from './school/components/notice/Notice'
+import Schedule from './school/components/schedule/Schedule'
+import Students from './school/components/students/Students'
+import Subjects from './school/components/subjects/Subjects'
+import Teachers from './school/components/teachers/Teachers'
+import Client from './client/Client'
+import Home from './client/components/home/Home'
+import Login from './client/components/Login/Login'
+import Register from './client/components/register/Register'
 
 function App() {
 
@@ -18,7 +21,6 @@ function App() {
     <>
       <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Testing />}></Route>
         {/* SCHOOL ROUTE */}
         <Route path="school" element={<School />}>
           <Route index element={<Dashboard />} />
@@ -32,18 +34,24 @@ function App() {
           <Route path='subjects' element={<Subjects />} />
           <Route path='teachers' element={<Teachers />} />
         </Route>
+
         {/* STUDENT ROUTE */}
         <Route>
 
         </Route>
+
         {/* TEACHER ROUTE */}
         <Route>
 
         </Route>
-        {/* CLIENT ROUTE */}
-        <Route>
 
+        {/* CLIENT ROUTE */}
+        <Route path='/' element={<Client />}>
+          <Route index element={<Home />} />
+          <Route path='login' element={<Login />} />
+          <Route path='register' element={<Register />} />
         </Route>
+
       </Routes>      
       </BrowserRouter>
     </>
