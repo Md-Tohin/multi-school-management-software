@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 //  ROUTERS IMPORT
-const schoolRouter = require('./routers/school.router')
+// const schoolRouter = require('./routers/school.router')
 
 const app = express();
 app.use(express.json());
@@ -34,7 +34,7 @@ app.get("/test", (req, res) => {
 });
 
 //  ROUTERS
-app.use("/api/school", schoolRouter);
+// app.use("/api/school", schoolRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
