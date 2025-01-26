@@ -1,6 +1,6 @@
 {
     "version" : 2,
-    "name" : "School management system",
+    "name" : "Multi School management system",
     "builds" : [
         {
             "src" : "./index.js",
