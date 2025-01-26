@@ -36,7 +36,7 @@ app.get("/test", (req, res) => {
 });
 
 //  ROUTERS
-// app.use("/api/school", schoolRouter);
+app.use("/api/school", schoolRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
