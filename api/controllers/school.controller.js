@@ -11,7 +11,15 @@ module.exports = {
   registerSchool: async (req, res) => {
     try {
       const form = new formidable.IncomingForm();
-      form.parse(req, async (res, fields, files) => {
+      form.parse(req, async (err, fields, files) => {  
+        const school = await School.findOne({email: fields.email[0]});
+        if(school){
+          return res.status(409).json({
+            message: "Email is already registered!",
+            error: true,
+            success: false,
+          });
+        }   
         const photo = files.image[0];
         let filepath = photo.filepath;
         let originalFileName = photo.originalFilename.replace(" ", "_");
@@ -27,6 +35,7 @@ module.exports = {
         const hashPassword = bcrypt.hashSync(fields.password[0], salt);
 
         const newSchool = new School({
+          school_image: originalFileName,
           school_name: fields.school_name[0],
           email: fields.email[0],
           owner_name: fields.owner_name[0],
@@ -34,7 +43,7 @@ module.exports = {
         });
 
         const savedSchool = await newSchool.save();
-        res.status(200).json({
+        return res.status(200).json({
           data: savedSchool,
           message: "School is Registered Successfully!",
           success: true,
@@ -42,7 +51,7 @@ module.exports = {
         });
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "School Registration Failed!",
         error: true,
         success: false,
@@ -65,7 +74,7 @@ module.exports = {
             role: "SCHOOL",
           });
           res.header("Authorization", token);
-          res.status(200).json({
+          return res.status(200).json({
             success: true,
             error: false,
             message: "Login Success!",
@@ -78,21 +87,21 @@ module.exports = {
             },
           });
         } else {
-          res.status(401).json({
+          return res.status(401).json({
             message: "Password is Incorrect!",
             error: true,
             success: false,
           });
         }
       } else {
-        res.status(401).json({
+        return res.status(401).json({
           message: "Email is not Registered!",
           error: true,
           success: false,
         });
       }
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal Server Error [SCHOOL LOGIN]",
         error: true,
         success: false,
@@ -107,14 +116,14 @@ module.exports = {
         "-owner_name",
         "-createdAt",
       ]);
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         error: false,
         schools,
         message: "Success in fetching all schools.",
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: true,
         message: "Internal Server Error [ ALL SCHOOL DATA ].",
@@ -126,21 +135,21 @@ module.exports = {
       const id = req.user.id;
       const school = await School.findOne({ _id: id });
       if (school) {
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           error: false,
           school,
           message: "Success in fetching own school data.",
         });
       } else {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: true,
           message: "School not found.",
         });
       }
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: true,
         message: "Internal Server Error [ Own SCHOOL DATA ].",
@@ -185,7 +194,7 @@ module.exports = {
         });
         await school.save();
 
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           error: false,
           message: "School updated Successfully.",
@@ -193,7 +202,7 @@ module.exports = {
         });
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "School Registration Failed!",
         error: true,
         success: false,

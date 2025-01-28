@@ -18,6 +18,10 @@ app.use(
   })
 );
 app.use(cors());
+// app.use(cors({
+//   credentials : false,
+//   origin : process.env.FRONTEND_URL
+// }))
 app.use(cookeParser());
 
 // mongoDB connection
