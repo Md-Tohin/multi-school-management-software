@@ -4,6 +4,10 @@ const SummaryApi = {
     register: {
         url: "/api/school/register",
         method: "post"
+    },
+    login: {
+        url: "/api/school/login",
+        method: "post"
     }
 }
 

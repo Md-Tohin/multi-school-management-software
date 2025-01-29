@@ -59,7 +59,7 @@ module.exports = {
     }
   },
   loginSchool: async (req, res) => {
-    try {
+    try {      
       const school = await School.findOne({ email: req.body.email });
       if (school) {
         const isAuth = bcrypt.compareSync(req.body.password, school.password);
@@ -72,7 +72,7 @@ module.exports = {
             school_name: school.school_name,
             image_url: school.school_image,
             role: "SCHOOL",
-          });
+          }, jwtSecret);
           res.header("Authorization", token);
           return res.status(200).json({
             success: true,

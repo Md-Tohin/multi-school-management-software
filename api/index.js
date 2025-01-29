@@ -17,11 +17,16 @@ app.use(
     extended: true,
   })
 );
-app.use(cors());
-// app.use(cors({
-//   credentials : false,
-//   origin : process.env.FRONTEND_URL
-// }))
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // Allow requests from frontend
+  credentials: true, // Allow cookies and Authorization headers
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  exposedHeaders: ["Authorization"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(cookeParser());
 
 // mongoDB connection
