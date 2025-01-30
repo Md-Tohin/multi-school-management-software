@@ -243,7 +243,7 @@ export default function School() {
           ))}
         </List>        
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, background: "#f2f2f2de", minHeight: "100vh" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

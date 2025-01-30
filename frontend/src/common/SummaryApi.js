@@ -20,6 +20,22 @@ const SummaryApi = {
     updateSchool: {
         url: "/api/school/update",
         method: "patch"
+    },
+    createClass: {
+        url: "/api/class/create",
+        method: "post"
+    },
+    getClass: {
+        url: "/api/class/get",
+        method: "get"
+    },
+    updateClass: {
+        url: "/api/class/update",
+        method: "patch"
+    },
+    deleteClass: {
+        url: "/api/class/delete",
+        method: "delete"
     }
 }
 

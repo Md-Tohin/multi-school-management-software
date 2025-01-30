@@ -10,7 +10,7 @@ const classSchema = new mongoose.Schema({
         required: true
     },
     class_num: {
-        type: Number,
+        type: String,
         required: true
     },
     attendee: {

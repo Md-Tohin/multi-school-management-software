@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const studentSchema = new mongoose({
+const studentSchema = new mongoose.Schema({
     school: {
         type: mongoose.Schema.ObjectId,
         ref: "School"
@@ -15,7 +15,7 @@ const studentSchema = new mongoose({
     },
     student_class: {
         type: mongoose.Schema.ObjectId,
-        required: true
+        ref: "Class"
     },
     age: {
         type: String,
