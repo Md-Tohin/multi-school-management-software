@@ -8,6 +8,10 @@ const SummaryApi = {
     login: {
         url: "/api/school/login",
         method: "post"
+    },
+    getSchools: {
+        url: "/api/school/all",
+        method: "get"
     }
 }
 

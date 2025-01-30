@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import { useFormik } from "formik";
 import { Button, CardMedia, Typography } from "@mui/material";
 import { registerSchema } from "../../../yupSchema/registerSchema";
-import axios from "axios";
+// import axios from "axios";
 import MessageSnackbar from "../../../basicUtilityComponents/snackbar/MessageSnackbar";
 import image from "../../../../public/images/register.webp";
 import Axios from "../../../utils/Axios";

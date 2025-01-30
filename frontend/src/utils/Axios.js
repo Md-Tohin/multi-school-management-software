@@ -9,9 +9,7 @@ const Axios = axios.create({
 Axios.interceptors.request.use((request) => {
     if(localStorage.getItem("token")){
         request.headers.Authorization = `Bearer ${localStorage.getItem("token")}`
-    }
-    console.log(localStorage.getItem("token"));
-    
+    }    
     return request;
 })
 
