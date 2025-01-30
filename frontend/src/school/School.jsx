@@ -28,6 +28,7 @@ import SubjectIcon from "@mui/icons-material/Subject";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import HomeIcon from '@mui/icons-material/Home';
 // import HomeIcon from '@mui/icons-material/Home';
 // import LogoutIcon from "@mui/icons-material/Logout";
 
@@ -126,6 +127,7 @@ export default function School() {
   const navigate = useNavigate();
 
   const navArr = [
+    { link: "/", component: "Home", icon: HomeIcon },
     { link: "/school", component: "Dashboard", icon: DashboardCustomizeIcon },
     { link: "/school/class", component: "Class", icon: FormatListNumberedIcon },
     { link: "/school/subjects", component: "Subjects", icon: SubjectIcon },

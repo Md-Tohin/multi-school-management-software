@@ -20,7 +20,7 @@ app.use(
 const corsOptions = {
   origin: process.env.FRONTEND_URL, // Allow requests from frontend
   credentials: true, // Allow cookies and Authorization headers
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allowed HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   exposedHeaders: ["Authorization"],
 };

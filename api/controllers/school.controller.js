@@ -11,15 +11,15 @@ module.exports = {
   registerSchool: async (req, res) => {
     try {
       const form = new formidable.IncomingForm();
-      form.parse(req, async (err, fields, files) => {  
-        const school = await School.findOne({email: fields.email[0]});
-        if(school){
+      form.parse(req, async (err, fields, files) => {
+        const school = await School.findOne({ email: fields.email[0] });
+        if (school) {
           return res.status(409).json({
             message: "Email is already registered!",
             error: true,
             success: false,
           });
-        }   
+        }
         const photo = files.image[0];
         let filepath = photo.filepath;
         let originalFileName = photo.originalFilename.replace(" ", "_");
@@ -59,20 +59,23 @@ module.exports = {
     }
   },
   loginSchool: async (req, res) => {
-    try {      
+    try {
       const school = await School.findOne({ email: req.body.email });
       if (school) {
         const isAuth = bcrypt.compareSync(req.body.password, school.password);
         if (isAuth) {
           const jwtSecret = process.env.JWT_SECRET;
-          const token = jwt.sign({
-            id: school._id,
-            schoolId: school._id,
-            owner_name: school.owner_name,
-            school_name: school.school_name,
-            image_url: school.school_image,
-            role: "SCHOOL",
-          }, jwtSecret);
+          const token = jwt.sign(
+            {
+              id: school._id,
+              schoolId: school._id,
+              owner_name: school.owner_name,
+              school_name: school.school_name,
+              image_url: school.school_image,
+              role: "SCHOOL",
+            },
+            jwtSecret
+          );
           res.header("Authorization", token);
           return res.status(200).json({
             success: true,
@@ -133,7 +136,7 @@ module.exports = {
   getSchoolOwnData: async (req, res) => {
     try {
       const id = req.user.id;
-      const school = await School.findOne({ _id: id });
+      const school = await School.findOne({ _id: id }).select(["-password"]);
       if (school) {
         return res.status(200).json({
           success: true,
@@ -160,8 +163,9 @@ module.exports = {
     try {
       const id = req.user.id; //  auth middleware
       const form = new formidable.IncomingForm();
-      form.parse(req, async (res, fields, files) => {
+      form.parse(req, async (err, fields, files) => {
         const school = await School.findOne({ _id: id });
+
         if (files.image) {
           const photo = files.image[0];
           let filepath = photo.filepath;
@@ -187,8 +191,8 @@ module.exports = {
           );
           let photoData = fs.readFileSync(filepath);
           fs.writeFileSync(newPath, photoData);
+          school['school_image'] = originalFileName;
         }
-
         Object.keys(fields).forEach((field) => {
           school[field] = fields[field][0];
         });

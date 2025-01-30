@@ -9,8 +9,12 @@ import image from "../../../../public/images/register.webp";
 import { loginSchema } from "../../../yupSchema/loginSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const {login} = React.useContext(AuthContext);    
   const [handleMessageOpen, setHandleMessageOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [messageType, setMessageType] = React.useState("success");
@@ -35,14 +39,16 @@ export default function Login() {
             if(token){
                 localStorage.setItem("token", token);
             }
-            const user = resp?.user;            
+            const user = await resp?.user;            
             if(user){
                 localStorage.setItem("user", JSON.stringify(user));
+                login(user);
             }
             Formik.resetForm();
             setMessage(resp?.message);
             setMessageType("success");
             setHandleMessageOpen(true);
+            navigate('/school');
         } catch (e) {
             setMessage(e?.response?.data?.message);
             setMessageType("error");

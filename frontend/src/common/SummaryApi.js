@@ -12,6 +12,14 @@ const SummaryApi = {
     getSchools: {
         url: "/api/school/all",
         method: "get"
+    },
+    getSchoolOwnData: {
+        url: "/api/school/fetch-single",
+        method: "get"
+    },
+    updateSchool: {
+        url: "/api/school/update",
+        method: "patch"
     }
 }
 
