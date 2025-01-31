@@ -36,7 +36,15 @@ const SummaryApi = {
     deleteClass: {
         url: "/api/class/delete",
         method: "delete"
-    }
+    },
+    createSubject: {
+        url: "/api/subject/create",
+        method: "post"
+    },
+    getSubject: {
+        url: "/api/subject/all",
+        method: "get"
+    },
 }
 
 export default SummaryApi

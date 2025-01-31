@@ -8,6 +8,7 @@ dotenv.config();
 //  ROUTERS IMPORT
 const schoolRouter = require('./routers/school.router.js')
 const classRouter = require('./routers/class.router.js')
+const subjectRouter = require('./routers/subject.route.js')
 
 
 const app = express();
@@ -47,6 +48,7 @@ app.get("/test", (req, res) => {
 //  ROUTERS
 app.use("/api/school", schoolRouter);
 app.use("/api/class", classRouter);
+app.use("/api/subject", subjectRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

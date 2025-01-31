@@ -4,55 +4,43 @@ import { Button, Fade, Modal, TextField, Typography } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
-import { classSchema } from "../../../yupSchema/classSchema";
+import { subjectSchema } from "../../../yupSchema/subjectSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
+import axios from "axios";
 
-export default function AddClass({
-  openAddModal,
-  setOpenAddModal,
-  fetchClass,
-  setHandleMessageOpen,
-  setMessage,
-  setMessageType,
-}) {
-  const [open, setOpen] = useState(openAddModal);
+export default function EditSubject({ selectedSubject, openEditModal, setOpenEditModal, fetchSubject, setHandleMessageOpen, setMessage, setMessageType }) {
+  const [open, setOpen] = useState(openEditModal);
   const handleClose = () => {
     setOpen(false);
-    setOpenAddModal(false);
+    setOpenEditModal(false);
   };
 
   const initialValues = {
-    class_text: "",
-    class_num: "",
+    subject_name: selectedSubject.subject_name,
+    subject_codename: selectedSubject.subject_codename,
   };
 
   //  FROM SUBMIT
   const Formik = useFormik({
     initialValues,
-    validationSchema: classSchema,
-    onSubmit: async (values) => {
-      try {
-        const response = await Axios({
-          ...SummaryApi.createClass,
-          data: { ...values },
-        });
-
-        const { data: resp } = response;
-        if (resp.success) {
-          Formik.resetForm();
-          if (setOpenAddModal) setOpenAddModal(false);
-          if (fetchClass) fetchClass();
-          if (setMessage) setMessage(resp.message);
-          if (setMessageType) setMessageType("success");
-          if (setHandleMessageOpen) setHandleMessageOpen(true);
-        }
-      } catch (error) {
+    validationSchema: subjectSchema,
+    onSubmit: async (values) => {      
+      axios.patch(`${import.meta.env.VITE_API_URL}/api/subject/update/${selectedSubject._id}`, {...values})
+      .then(resp => {        
+        Formik.resetForm();
+          if(setOpenEditModal) setOpenEditModal(false);
+          if(fetchSubject) fetchSubject();
+          if(setMessage) setMessage(resp.data.message);
+          if(setMessageType) setMessageType("success");
+          if(setHandleMessageOpen) setHandleMessageOpen(true);
+      })
+      .catch((error) => {
         console.log(error);
-        if (setMessage) setMessage("Class created Failed");
-        if (setMessageType) setMessageType("error");
-        if (setHandleMessageOpen) setHandleMessageOpen(true);
-      }
+        if(setMessage) setMessage(error?.response?.data?.message);
+        if(setMessageType) setMessageType("error");
+        if(setHandleMessageOpen) setHandleMessageOpen(true);
+      })
     },
   });
 
@@ -74,7 +62,7 @@ export default function AddClass({
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={openAddModal}
+        open={openEditModal}
         onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
@@ -84,13 +72,13 @@ export default function AddClass({
           },
         }}
       >
-        <Fade in={openAddModal}>
+        <Fade in={openEditModal}>
           <Box sx={style}>
             <Typography
               variant="h4"
               sx={{ textAlign: "center", fontWeight: "600" }}
             >
-              Add Class
+              Edit Subject
             </Typography>
             <Box
               onSubmit={Formik.handleSubmit}
@@ -100,14 +88,14 @@ export default function AddClass({
               autoComplete="off"
             >
               <TextField
-                name="class_text"
-                label="Class Text"
-                value={Formik.values.class_text}
+                name="subject_name"
+                label="Subject Name"
+                value={Formik.values.subject_name}
                 onChange={Formik.handleChange}
                 onBlur={Formik.handleBlur}
                 style={{ marginTop: "15px" }}
               />
-              {Formik.touched.class_text && Formik.errors.class_text && (
+              {Formik.touched.subject_name && Formik.errors.subject_name && (
                 <p
                   style={{
                     color: "red",
@@ -117,19 +105,19 @@ export default function AddClass({
                     paddingLeft: "12px ",
                   }}
                 >
-                  {Formik.errors.class_text}
+                  {Formik.errors.subject_name}
                 </p>
               )}
 
               <TextField
-                name="class_num"
-                label="Class Number"
-                value={Formik.values.class_num}
+                name="subject_codename"
+                label="Subject Codename"
+                value={Formik.values.subject_codename}
                 onChange={Formik.handleChange}
                 onBlur={Formik.handleBlur}
                 style={{ marginTop: "15px" }}
               />
-              {Formik.touched.class_num && Formik.errors.class_num && (
+              {Formik.touched.subject_codename && Formik.errors.subject_codename && (
                 <p
                   style={{
                     color: "red",
@@ -139,7 +127,7 @@ export default function AddClass({
                     paddingLeft: "12px ",
                   }}
                 >
-                  {Formik.errors.class_num}
+                  {Formik.errors.subject_codename}
                 </p>
               )}
 
@@ -148,7 +136,7 @@ export default function AddClass({
                 variant="contained"
                 sx={{ width: "100%", marginTop: "13px", marginLeft: "13px" }}
               >
-                Submit
+                Update
               </Button>
             </Box>
           </Box>

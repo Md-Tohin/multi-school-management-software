@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditClass from "./EditClass";
 import axios from "axios";
+import ConfirmBox from "../../../basicUtilityComponents/ConfirmBox";
 
 const Class = () => {
   const [selectedClass, setSelectedClass] = useState(null);
@@ -21,6 +22,8 @@ const Class = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
   const [classes, setClasses] = useState([]);
+  const [openConfirmBox, setOpenConfirmBox] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   async function fetchClass() {
     try {
@@ -50,19 +53,22 @@ const Class = () => {
     }),
   }));
 
-  const handleDelete = (id) => {   
-    axios.delete(`${import.meta.env.VITE_API_URL}/api/class/delete/${id}`)
+  const handleDelete = () => {
+    axios
+      .delete(`${import.meta.env.VITE_API_URL}/api/class/delete/${deleteId}`)
       .then((resp) => {
-          fetchClass();
-          if(setMessage) setMessage(resp.data.message);
-          if(setMessageType) setMessageType("success");
-          if(setHandleMessageOpen) setHandleMessageOpen(true);
+        fetchClass();
+        if (setMessage) setMessage(resp.data.message);
+        if (setMessageType) setMessageType("success");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
       })
       .catch((e) => {
-        console.log(e);        
-        if(setMessage) setMessage(e?.response?.data?.message);
-        if(setMessageType) setMessageType("error");
-        if(setHandleMessageOpen) setHandleMessageOpen(true);
+        console.log(e);
+        if (setMessage) setMessage(e?.response?.data?.message);
+        if (setMessageType) setMessageType("error");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
       });
   };
 
@@ -97,6 +103,15 @@ const Class = () => {
           message={message}
           messageType={messageType}
           close={() => setHandleMessageOpen(false)}
+        />
+      )}
+
+      {openConfirmBox && (
+        <ConfirmBox
+          openConfirmBox={openConfirmBox}
+          setOpenConfirmBox={setOpenConfirmBox}
+          cancel={() => setOpenConfirmBox(false)}
+          confirm={handleDelete}
         />
       )}
 
@@ -164,7 +179,10 @@ const Class = () => {
                       <EditIcon />
                     </button>
                     <button
-                      onClick={() => handleDelete(item._id)}
+                      onClick={() => {
+                        setOpenConfirmBox(true);
+                        setDeleteId(item._id);
+                      }}
                       style={{
                         padding: "2px 5px",
                         background: "red",

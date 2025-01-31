@@ -4,14 +4,14 @@ import { Button, Fade, Modal, TextField, Typography } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
-import { classSchema } from "../../../yupSchema/classSchema";
+import { subjectSchema } from "../../../yupSchema/subjectSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 
-export default function AddClass({
+export default function AddSubject({
   openAddModal,
   setOpenAddModal,
-  fetchClass,
+  fetchSubject,
   setHandleMessageOpen,
   setMessage,
   setMessageType,
@@ -23,18 +23,18 @@ export default function AddClass({
   };
 
   const initialValues = {
-    class_text: "",
-    class_num: "",
+    subject_name: "",
+    subject_codename: "",
   };
 
   //  FROM SUBMIT
   const Formik = useFormik({
     initialValues,
-    validationSchema: classSchema,
+    validationSchema: subjectSchema,
     onSubmit: async (values) => {
       try {
         const response = await Axios({
-          ...SummaryApi.createClass,
+          ...SummaryApi.createSubject,
           data: { ...values },
         });
 
@@ -42,14 +42,14 @@ export default function AddClass({
         if (resp.success) {
           Formik.resetForm();
           if (setOpenAddModal) setOpenAddModal(false);
-          if (fetchClass) fetchClass();
+          if (fetchSubject) fetchSubject();
           if (setMessage) setMessage(resp.message);
           if (setMessageType) setMessageType("success");
           if (setHandleMessageOpen) setHandleMessageOpen(true);
         }
       } catch (error) {
         console.log(error);
-        if (setMessage) setMessage("Class created Failed");
+        if (setMessage) setMessage("Subject created Failed");
         if (setMessageType) setMessageType("error");
         if (setHandleMessageOpen) setHandleMessageOpen(true);
       }
@@ -90,7 +90,7 @@ export default function AddClass({
               variant="h4"
               sx={{ textAlign: "center", fontWeight: "600" }}
             >
-              Add Class
+              Add Subject
             </Typography>
             <Box
               onSubmit={Formik.handleSubmit}
@@ -100,14 +100,14 @@ export default function AddClass({
               autoComplete="off"
             >
               <TextField
-                name="class_text"
-                label="Class Text"
-                value={Formik.values.class_text}
+                name="subject_name"
+                label="Subject Name"
+                value={Formik.values.subject_name}
                 onChange={Formik.handleChange}
                 onBlur={Formik.handleBlur}
                 style={{ marginTop: "15px" }}
               />
-              {Formik.touched.class_text && Formik.errors.class_text && (
+              {Formik.touched.subject_name && Formik.errors.subject_name && (
                 <p
                   style={{
                     color: "red",
@@ -117,19 +117,19 @@ export default function AddClass({
                     paddingLeft: "12px ",
                   }}
                 >
-                  {Formik.errors.class_text}
+                  {Formik.errors.subject_name}
                 </p>
               )}
 
               <TextField
-                name="class_num"
-                label="Class Number"
-                value={Formik.values.class_num}
+                name="subject_codename"
+                label="Subject Codename"
+                value={Formik.values.subject_codename}
                 onChange={Formik.handleChange}
                 onBlur={Formik.handleBlur}
                 style={{ marginTop: "15px" }}
               />
-              {Formik.touched.class_num && Formik.errors.class_num && (
+              {Formik.touched.subject_codename && Formik.errors.subject_codename && (
                 <p
                   style={{
                     color: "red",
@@ -139,7 +139,7 @@ export default function AddClass({
                     paddingLeft: "12px ",
                   }}
                 >
-                  {Formik.errors.class_num}
+                  {Formik.errors.subject_codename}
                 </p>
               )}
 
