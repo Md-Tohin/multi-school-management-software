@@ -51,7 +51,7 @@ module.exports = {
     //  UPDATE CLASS
     updateClassWithId: async(req, res) => {
         try {
-            let id = req.params.id;
+            let id = req.params.id;            
             await Class.findOneAndUpdate({_id: id}, {
                 $set: {...req.body}
             });
@@ -75,7 +75,7 @@ module.exports = {
     deleteClassWithId: async(req, res) => {
         try {
             let id = req.params.id;
-            let schoolId = req.user.schoolId;
+            const schoolId = req.user.schoolId;            
 
             const classStudentCount = (await Student.find({school: schoolId, student_class: id})).length;
             const classExamCount = (await Exam.find({class: id, school: schoolId})).length;

@@ -26,7 +26,7 @@ const SummaryApi = {
         method: "post"
     },
     getClass: {
-        url: "/api/class/get",
+        url: "/api/class/all",
         method: "get"
     },
     updateClass: {
