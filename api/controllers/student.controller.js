@@ -7,10 +7,30 @@ const jwt = require("jsonwebtoken");
 
 const Student = require("../models/student.model.js");
 
+const generateStudentId = (lastId) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Ensure 2 digits
+  const day = String(now.getDate()).padStart(2, '0'); // Ensure 2 digits
+
+  let lastNumber = 1; // Default if no last ID
+  if (lastId) {
+      const lastFourDigits = parseInt(lastId.slice(-4), 10);
+      lastNumber = lastFourDigits + 1;
+  }
+
+  const newId = `${year}${month}${day}${String(lastNumber).padStart(4, '0')}`;
+  return newId;
+};
+
 module.exports = {
   //  STUDENT REGISTER
   registerStudent: async (req, res) => {
-    try {
+    try {    
+      const schoolId = req.user.schoolId;
+      const lastStudentId = await Student.findOne({school: schoolId}, null, { sort: { _id: -1 } }).select("student_id");
+      const newStudentId = generateStudentId(lastStudentId.student_id);
+      
       const form = new formidable.IncomingForm();
       form.parse(req, async (err, fields, files) => {
         const student = await Student.findOne({ email: fields.email[0] });
@@ -36,7 +56,8 @@ module.exports = {
         const hashPassword = bcrypt.hashSync(fields.password[0], salt);
 
         const newStudent = new Student({
-          school: req?.user?.schoolId,
+          school: schoolId,
+          student_id: newStudentId,
           name: fields.name[0],
           email: fields.email[0],
           student_class: fields.student_class[0],
@@ -76,7 +97,7 @@ module.exports = {
           const token = jwt.sign(
             {
               id: student._id,
-              studentId: student._id,
+              studentId: student.student_id,
               schoolId: student.school,
               name: student.name,
               student_class: student.student_class,
@@ -94,6 +115,7 @@ module.exports = {
             user: {
               id: student._id,
               schoolId: student.school,
+              studentId: student.student_id,
               student_class: student.student_class,
               address: student.address,
               name: student.name,
@@ -128,18 +150,26 @@ module.exports = {
     try {
       const filterQuery = {};
       const schoolId = req.user.schoolId;
-      filterQuery['school'] = schoolId;
-      if(req.query.hasOwnProperty('search')){
-        filterQuery['name'] = {
-          $regex: req.query.search, $option: "i"
-        }
+
+      filterQuery["school"] = schoolId;
+      if (req.query.hasOwnProperty("student_id")) {
+        filterQuery["student_id"] = {
+          $regex: req.query.student_id,
+          $options: "i",
+        };
       }
-      if(req.query.hasOwnProperty("student_class")){
-        filterQuery['student_class'] = req.query.student_class;
+      if (req.query.hasOwnProperty("search")) {
+        filterQuery["name"] = {
+          $regex: req.query.search,
+          $options: "i",
+        };
       }
-      const students = await Student.find(filterQuery).select([
-        "-password",
-      ]);
+      if (req.query.hasOwnProperty("student_class")) {
+        filterQuery["student_class"] = req.query.student_class;
+      }      
+      const students = await Student.find(filterQuery)
+        .select(["-password"])
+        .populate("student_class");
       return res.status(200).json({
         success: true,
         error: false,
@@ -160,7 +190,10 @@ module.exports = {
       const id = req.user.id;
       const schoolId = req.user.schoolId;
 
-      const student = await Student.findOne({ _id: id, school: schoolId }).select(["-password"]);
+      const student = await Student.findOne({
+        _id: id,
+        school: schoolId,
+      }).select(["-password"]);
       if (student) {
         return res.status(200).json({
           success: true,
@@ -189,7 +222,10 @@ module.exports = {
       const id = req.params.id;
       const schoolId = req.user.schoolId;
 
-      const student = await Student.findOne({ _id: id, school: schoolId }).select(["-password"]);
+      const student = await Student.findOne({
+        _id: id,
+        school: schoolId,
+      }).select(["-password"]);
       if (student) {
         return res.status(200).json({
           success: true,
@@ -247,7 +283,7 @@ module.exports = {
           );
           let photoData = fs.readFileSync(filepath);
           fs.writeFileSync(newPath, photoData);
-          student['student_image'] = originalFileName;
+          student["student_image"] = originalFileName;
         }
         Object.keys(fields).forEach((field) => {
           student[field] = fields[field][0];
@@ -274,20 +310,20 @@ module.exports = {
     try {
       const id = req.params.id;
       const schoolId = req.user.schooId;
-      await Student.findOneAndDelete({_id: id, school: schoolId});
-      const students = await Student.find({school: schoolId});
+      await Student.findOneAndDelete({ _id: id, school: schoolId });
+      const students = await Student.find({ school: schoolId });
       return res.status(200).json({
         message: "Student Deleted Successfully!",
         students,
         error: false,
-        success: true
-      })
-    } catch (error) {      
+        success: true,
+      });
+    } catch (error) {
       return res.status(500).json({
         success: false,
         error: true,
         message: "Internal Server Error [ DELETE STUDENT ].",
       });
     }
-  }
+  },
 };

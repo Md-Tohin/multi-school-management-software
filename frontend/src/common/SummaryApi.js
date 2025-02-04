@@ -45,6 +45,10 @@ const SummaryApi = {
         url: "/api/subject/all",
         method: "get"
     },
+    createStudent: {
+        url: "/api/student/register",
+        method: "post"
+    },
     getStudent: {
         url: "/api/student/all",
         method: "get"

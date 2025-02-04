@@ -73,28 +73,48 @@ export default function AddStudent({
     initialValues,
     validationSchema: studentSchema,
     onSubmit: async (values) => {
-      try {
-        console.log(values);
+      if (file) {
+        try {
+          console.log(values);
+          const fd = new FormData();
 
-        // const response = await Axios({
-        //   ...SummaryApi.createStudent,
-        //   data: { ...values },
-        // });
+          fd.append("image", file, file.name);
+          fd.append("name", values.name);
+          fd.append("email", values.email);
+          fd.append("student_class", values.student_class);
+          fd.append("age", values.age);
+          fd.append("gender", values.gender);
+          fd.append("guardian", values.guardian);
+          fd.append("guardian_phone", values.guardian_phone);
+          fd.append("address", values.address);
+          fd.append("password", values.password);
 
-        // const { data: resp } = response;
-        // if (resp.success) {
-        //   Formik.resetForm();
-        //   if (setOpenAddModal) setOpenAddModal(false);
-        //   if (fetchStudent) fetchStudent();
-        //   if (setMessage) setMessage(resp.message);
-        //   if (setMessageType) setMessageType("success");
-        //   if (setHandleMessageOpen) setHandleMessageOpen(true);
-        // }
-      } catch (error) {
-        console.log(error);
-        if (setMessage) setMessage("Student created Failed");
-        if (setMessageType) setMessageType("error");
-        if (setHandleMessageOpen) setHandleMessageOpen(true);
+          const response = await Axios({
+            ...SummaryApi.createStudent,
+            data: fd,
+          });
+
+          console.log(response);
+          const { data: resp } = response;
+          if (resp.success) {
+            Formik.resetForm();
+            handleClearFile();
+            if (setOpenAddModal) setOpenAddModal(false);
+            if (fetchStudent) fetchStudent();
+            if (setMessage) setMessage(resp.message);
+            if (setMessageType) setMessageType("success");
+            if (setHandleMessageOpen) setHandleMessageOpen(true);
+          }
+        } catch (error) {
+          console.log(error);
+          if (setMessage) setMessage(error?.response?.data?.message);
+          if (setMessageType) setMessageType("error");
+          if (setHandleMessageOpen) setHandleMessageOpen(true);
+        }
+      } else {
+        setMessage("Please Add Student Image");
+        setMessageType("error");
+        setHandleMessageOpen(true);
       }
     },
   });
@@ -447,19 +467,18 @@ export default function AddStudent({
                 >
                   {/* {Formik.values.address} */}
                 </textarea>
-                {Formik.touched.address &&
-                  Formik.errors.address && (
-                    <p
-                      style={{
-                        color: "red",
-                        textTransform: "",
-                        fontWeight: "600",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {Formik.errors.address}
-                    </p>
-                  )}
+                {Formik.touched.address && Formik.errors.address && (
+                  <p
+                    style={{
+                      color: "red",
+                      textTransform: "",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {Formik.errors.address}
+                  </p>
+                )}
               </Box>
               <Box>
                 {imageUrl && (

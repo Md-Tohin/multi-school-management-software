@@ -1,10 +1,17 @@
-
-import { Button, Typography } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageSnackbar from "../../../basicUtilityComponents/snackbar/MessageSnackbar";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
@@ -14,6 +21,7 @@ import axios from "axios";
 import ConfirmBox from "../../../basicUtilityComponents/ConfirmBox";
 import AddStudent from "./AddStudent";
 import EditStudent from "./EditStudent";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const Students = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -23,27 +31,89 @@ const Students = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
   const [students, setStudents] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [openConfirmBox, setOpenConfirmBox] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [actionOpen, setActionOpen] = useState(false);
+  const actionRef = useRef(null);
 
-  async function fetchStudent() {
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (actionRef.current && !actionRef.current.contains(event.target)) {
+        setActionOpen(false);
+      }
+    }
+
+    // Attach event listener when actionOpen is true
+    if (actionOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [actionOpen]);
+
+  const [params, setParams] = useState({});
+  const handleClass = (e) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      student_class: e.target.value || undefined,
+    }));
+  };
+  const handleSearch = (e) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      search: e.target.value || undefined,
+    }));
+  };
+  const handleStudentId = (e) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      student_id: e.target.value || undefined,
+    }));
+  };
+  function fetchStudent() {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/student/fetch-with-query`, {
+        params,
+      })
+      .then((resp) => {
+        console.log(resp);
+        if (resp.data.success) {
+          setStudents(resp.data.students);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setMessage(e?.response?.data?.message);
+        setMessageType("error");
+        setHandleMessageOpen(true);
+      });
+  }
+
+  async function fetchClass() {
     try {
       const response = await Axios({
-        ...SummaryApi.getStudent,
+        ...SummaryApi.getClass,
       });
 
-      console.log(response);
-      
       if (response.data.success) {
-        setStudents(response.data.students);
+        setClasses(response.data.data);
       }
     } catch (err) {
       console.log(err);
     }
   }
+
+  useEffect(() => {
+    fetchClass();
+  }, []);
+
   useEffect(() => {
     fetchStudent();
-  }, []);
+  }, [params]);
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
@@ -141,7 +211,64 @@ const Students = () => {
         />
       )}
 
-      <Box component={"div"}>
+      <Box
+        component={"div"}
+        sx={{
+          display: "flex",
+          justifyContent: "left",
+          alignItems: "center",
+          gap: 3,
+          paddingBottom: "1rem",
+        }}
+      >
+        <Box>
+          <TextField
+            label="Student ID"
+            value={params.student_id ? params.student_id : ""}
+            onChange={(e) => {
+              handleStudentId(e);
+            }}
+            style={{ background: "white", width: "250px" }}
+          />
+        </Box>
+        <Box>
+          <TextField
+            label="Student Name"
+            value={params.search ? params.search : ""}
+            onChange={(e) => {
+              handleSearch(e);
+            }}
+            style={{ background: "white", width: "250px" }}
+          />
+        </Box>
+
+        <Box>
+          <FormControl style={{ width: "250px" }}>
+            <InputLabel>Select Class</InputLabel>
+            <Select
+              label="Select Class"
+              value={params.student_class ? params.student_class : ""}
+              onChange={(e) => {
+                handleClass(e);
+              }}
+              style={{ background: "white" }}
+            >
+              <MenuItem value=""> Select Class </MenuItem>
+              {classes &&
+                classes.length > 0 &&
+                classes.map((item, index) => {
+                  return (
+                    <MenuItem key={item._id + "class" + index} value={item._id}>
+                      {item.class_text} ({item.class_num})
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+          </FormControl>
+        </Box>
+      </Box>
+
+      <Box component={"div"} sx={{ paddingTop: "1rem" }}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid
             container
@@ -149,12 +276,103 @@ const Students = () => {
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
             {students.map((item, index) => (
-              <Grid item xs={2} sm={4} md={4} key={item._id + "student" + index}>
-                <Item>
-                  <Typography sx={{ fontSize: "20px" }}>
+              <Grid
+                item
+                xs={2}
+                sm={4}
+                md={3}
+                key={item._id + "student" + index}
+              >
+                <Item sx={{ position: "relative" }} ref={actionRef}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "15px",
+                      right: "10px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setActionOpen(true);
+                      setSelectedStudent(item);
+                    }}
+                  >
+                    <MoreVertIcon />
+                  </Box>
+                  {
+                    actionOpen && (
+                      <Box
+                    sx={{
+                      position: "absolute",
+                      top: "45px",
+                      right: "10px",
+                      border: "1px solid #d1d1d1",
+                      padding: "5px 10px",
+                      borderRadius: "5px",
+                      background: "white"
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "end",
+                        alignItems: "center",
+                        gap: 1,
+                        marginBottom: "5px",
+                      }}
+                    >
+                      <EditIcon style={{ fontSize: "16px", fontWeight: 600 }} />
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                        Edit
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "end",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <DeleteIcon
+                        style={{ fontSize: "16px", fontWeight: 600 }}
+                      />
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                        Delete
+                      </Typography>
+                    </Box>
+                  </Box>
+                  )}
+                  <Box>
+                    <img
+                      src={`/images/uploaded/student/${item.student_image}`}
+                      alt={item.name}
+                      style={{
+                        width: "120px",
+                        height: "120px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "1.1rem",
+                      color: "#333",
+                      fontWeight: 600,
+                      paddingTop: "0.5rem",
+                    }}
+                  >
                     {item.name}
                   </Typography>
-                  <Typography>{item.age}</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "0.9rem",
+                      color: "#888",
+                      fontWeight: 600,
+                      letterSpacing: "0.3px",
+                    }}
+                  >
+                    {item.student_id}
+                  </Typography>
                   <Box
                     component={"div"}
                     style={{
@@ -165,7 +383,7 @@ const Students = () => {
                       gap: "10px",
                     }}
                   >
-                    <button
+                    {/* <button
                       onClick={() => {
                         setOpenEditModal(true);
                         setSelectedStudent(item);
@@ -196,7 +414,7 @@ const Students = () => {
                       }}
                     >
                       <DeleteIcon />
-                    </button>
+                    </button> */}
                   </Box>
                 </Item>
               </Grid>
@@ -209,5 +427,3 @@ const Students = () => {
 };
 
 export default Students;
-
-
