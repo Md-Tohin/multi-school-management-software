@@ -9,6 +9,7 @@ dotenv.config();
 const schoolRouter = require('./routers/school.router.js')
 const classRouter = require('./routers/class.router.js')
 const subjectRouter = require('./routers/subject.route.js')
+const studentRouter = require('./routers/student.route.js')
 
 
 const app = express();
@@ -49,6 +50,7 @@ app.get("/test", (req, res) => {
 app.use("/api/school", schoolRouter);
 app.use("/api/class", classRouter);
 app.use("/api/subject", subjectRouter);
+app.use("/api/student", studentRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

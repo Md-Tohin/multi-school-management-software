@@ -207,7 +207,7 @@ module.exports = {
       });
     } catch (error) {
       return res.status(500).json({
-        message: "School Registration Failed!",
+        message: "School Updated Failed!",
         error: true,
         success: false,
       });

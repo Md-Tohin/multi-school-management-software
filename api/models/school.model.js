@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const schoolSchema = new mongoose.Schema({
-    school_name: {
-        type: String,
-        required: true
+    school: {
+        type: mongoose.Schema.ObjectId,
+        rer: "School"
     },
     email: {
         type: String,

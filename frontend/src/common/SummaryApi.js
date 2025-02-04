@@ -45,6 +45,10 @@ const SummaryApi = {
         url: "/api/subject/all",
         method: "get"
     },
+    getStudent: {
+        url: "/api/student/all",
+        method: "get"
+    },
 }
 
 export default SummaryApi
