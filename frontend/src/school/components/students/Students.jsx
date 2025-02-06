@@ -36,6 +36,10 @@ const Students = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [actionOpen, setActionOpen] = useState(false);
   const actionRef = useRef(null);
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const handleActionOpen = (studentId) => {
+    setSelectedStudentId(selectedStudentId === studentId ? null : studentId);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -126,23 +130,25 @@ const Students = () => {
     }),
   }));
 
-  const handleDelete = () => {
-    axios
-      .delete(`${import.meta.env.VITE_API_URL}/api/student/delete/${deleteId}`)
-      .then((resp) => {
-        fetchStudent();
-        if (setMessage) setMessage(resp.data.message);
-        if (setMessageType) setMessageType("success");
-        if (setHandleMessageOpen) setHandleMessageOpen(true);
-        setOpenConfirmBox(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        if (setMessage) setMessage(e?.response?.data?.message);
-        if (setMessageType) setMessageType("error");
-        if (setHandleMessageOpen) setHandleMessageOpen(true);
-        setOpenConfirmBox(false);
-      });
+  const handleDelete = () => { 
+    console.log("Deleted id : ", deleteId);
+       
+    // axios
+    //   .delete(`${import.meta.env.VITE_API_URL}/api/student/delete/${deleteId}`)
+    //   .then((resp) => {
+    //     fetchStudent();
+    //     if (setMessage) setMessage(resp.data.message);
+    //     if (setMessageType) setMessageType("success");
+    //     if (setHandleMessageOpen) setHandleMessageOpen(true);
+    //     setOpenConfirmBox(false);
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //     if (setMessage) setMessage(e?.response?.data?.message);
+    //     if (setMessageType) setMessageType("error");
+    //     if (setHandleMessageOpen) setHandleMessageOpen(true);
+    //     setOpenConfirmBox(false);
+    //   });
   };
 
   return (
@@ -201,6 +207,7 @@ const Students = () => {
 
       {openEditModal && (
         <EditStudent
+          classes={classes}
           selectedStudent={selectedStudent}
           openEditModal={openEditModal}
           setOpenEditModal={setOpenEditModal}
@@ -291,15 +298,15 @@ const Students = () => {
                       right: "10px",
                       cursor: "pointer",
                     }}
-                    onClick={() => {
-                      setActionOpen(true);
-                      setSelectedStudent(item);
-                    }}
+                    // onClick={() => {
+                    //   setActionOpen(true);
+                    //   setSelectedStudent(item);
+                    // }}
+                    onClick={() => handleActionOpen(item._id)}
                   >
                     <MoreVertIcon />
                   </Box>
-                  {
-                    actionOpen && (
+                  { selectedStudentId === item._id && (
                       <Box
                     sx={{
                       position: "absolute",
@@ -318,6 +325,11 @@ const Students = () => {
                         alignItems: "center",
                         gap: 1,
                         marginBottom: "5px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        setOpenEditModal(true);
+                        setSelectedStudent(item);
                       }}
                     >
                       <EditIcon style={{ fontSize: "16px", fontWeight: 600 }} />
@@ -326,11 +338,16 @@ const Students = () => {
                       </Typography>
                     </Box>
                     <Box
+                      onClick={() => {
+                        setOpenConfirmBox(true);
+                        setDeleteId(item._id);
+                      }}
                       sx={{
                         display: "flex",
                         justifyContent: "end",
                         alignItems: "center",
                         gap: 1,
+                        cursor: "pointer",
                       }}
                     >
                       <DeleteIcon

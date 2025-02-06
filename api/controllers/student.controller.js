@@ -251,13 +251,16 @@ module.exports = {
   //  UPDATE STUDENT
   updateStudent: async (req, res) => {
     try {
-      const id = req.user.id; //  auth middleware
+      const id = req.params.id; //  auth middleware
       const schooId = req.user.schoolId;
-
+      console.log("Student id : ",schooId);
       const form = new formidable.IncomingForm();
       form.parse(req, async (err, fields, files) => {
         const student = await Student.findOne({ _id: id, school: schooId });
-
+        console.log("student data: ",student);
+        
+        console.log("Student image : ",files.image);
+        console.log("Student id : ",schooId);
         if (files.image) {
           const photo = files.image[0];
           let filepath = photo.filepath;
