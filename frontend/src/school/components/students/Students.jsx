@@ -131,24 +131,23 @@ const Students = () => {
   }));
 
   const handleDelete = () => { 
-    console.log("Deleted id : ", deleteId);
-       
-    // axios
-    //   .delete(`${import.meta.env.VITE_API_URL}/api/student/delete/${deleteId}`)
-    //   .then((resp) => {
-    //     fetchStudent();
-    //     if (setMessage) setMessage(resp.data.message);
-    //     if (setMessageType) setMessageType("success");
-    //     if (setHandleMessageOpen) setHandleMessageOpen(true);
-    //     setOpenConfirmBox(false);
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     if (setMessage) setMessage(e?.response?.data?.message);
-    //     if (setMessageType) setMessageType("error");
-    //     if (setHandleMessageOpen) setHandleMessageOpen(true);
-    //     setOpenConfirmBox(false);
-    //   });
+    console.log("Deleted id : ", deleteId);       
+    axios
+      .delete(`${import.meta.env.VITE_API_URL}/api/student/delete/${deleteId}`)
+      .then((resp) => {
+        fetchStudent();
+        if (setMessage) setMessage(resp.data.message);
+        if (setMessageType) setMessageType("success");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        if (setMessage) setMessage(e?.response?.data?.message);
+        if (setMessageType) setMessageType("error");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
+      });
   };
 
   return (

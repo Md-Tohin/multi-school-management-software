@@ -15,24 +15,24 @@ import {
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
-import { studentEditSchema, studentSchema } from "../../../yupSchema/studentSchema";
+import { teacherEditSchema, teacherSchema } from "../../../yupSchema/teacherSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import axios from "axios";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 
-export default function EditStudent({
+export default function EditTeacher({
   classes,
-  selectedStudent,
+  selectedTeacher,
   openEditModal,
   setOpenEditModal,
-  fetchStudent,
+  fetchTeacher,
   setHandleMessageOpen,
   setMessage,
   setMessageType,
 }) {
-  console.log("edit data: ", selectedStudent);
+  console.log("edit data: ", selectedTeacher);
 
   const [open, setOpen] = useState(openEditModal);
   const handleClose = () => {
@@ -41,20 +41,20 @@ export default function EditStudent({
   };
 
   const initialValues = {
-    name: selectedStudent.name,
-    email: selectedStudent.email,
-    student_class: selectedStudent.student_class._id,
-    age: selectedStudent.age,
-    gender: selectedStudent.gender,
-    guardian: selectedStudent.guardian,
-    guardian_phone: selectedStudent.guardian_phone,
-    address: selectedStudent.address,
+    name: selectedTeacher.name,
+    email: selectedTeacher.email,
+    teacher_class: selectedTeacher.teacher_class._id,
+    age: selectedTeacher.age,
+    gender: selectedTeacher.gender,
+    guardian: selectedTeacher.guardian,
+    guardian_phone: selectedTeacher.guardian_phone,
+    address: selectedTeacher.address,
   };
 
   //  FROM SUBMIT
   const Formik = useFormik({
     initialValues,
-    validationSchema: studentEditSchema,
+    validationSchema: teacherEditSchema,
     onSubmit: async (values) => {  
       const fd = new FormData();
       if (file) {        
@@ -62,7 +62,7 @@ export default function EditStudent({
       } 
       fd.append("name", values.name);
       fd.append("email", values.email);
-      fd.append("student_class", values.student_class);
+      fd.append("teacher_class", values.teacher_class);
       fd.append("age", values.age);
       fd.append("gender", values.gender);
       fd.append("guardian", values.guardian);
@@ -70,11 +70,11 @@ export default function EditStudent({
       fd.append("address", values.address);
       fd.append("password", values.password);
 
-      axios.patch(`${import.meta.env.VITE_API_URL}/api/student/update/${selectedStudent._id}`, fd)
+      axios.patch(`${import.meta.env.VITE_API_URL}/api/teacher/update/${selectedTeacher._id}`, fd)
       .then(resp => {
         Formik.resetForm();
           if(setOpenEditModal) setOpenEditModal(false);
-          if(fetchStudent) fetchStudent();
+          if(fetchTeacher) fetchTeacher();
           if(setMessage) setMessage(resp.data.message);
           if(setMessageType) setMessageType("success");
           if(setHandleMessageOpen) setHandleMessageOpen(true);
@@ -114,7 +114,7 @@ export default function EditStudent({
   });
 
   const [file, setFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(`/images/uploaded/student/${selectedStudent.student_image}`);
+  const [imageUrl, setImageUrl] = useState(`/images/uploaded/teacher/${selectedTeacher.teacher_image}`);
   //  PREVIEW IMAGE
   const addImage = (event) => {
     const file = event.target.files[0];
@@ -152,7 +152,7 @@ export default function EditStudent({
               variant="h4"
               sx={{ textAlign: "center", fontWeight: "600" }}
             >
-              Edit Student
+              Edit Teacher
             </Typography>
             <Box
               onSubmit={Formik.handleSubmit}
@@ -172,7 +172,7 @@ export default function EditStudent({
               <Box>
                 <TextField
                   name="name"
-                  label="Student Name"
+                  label="Teacher Name"
                   value={Formik.values.name}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
@@ -215,13 +215,13 @@ export default function EditStudent({
               </Box>
               <Box>
                 <FormControl fullWidth>
-                  <InputLabel id="student_class">Select Class</InputLabel>
+                  <InputLabel id="teacher_class">Select Class</InputLabel>
                   <Select
-                    labelId="student_class"
+                    labelId="teacher_class"
                     id="demo-simple-select"
-                    value={Formik.values.student_class}
+                    value={Formik.values.teacher_class}
                     label="Select Class"
-                    name="student_class"
+                    name="teacher_class"
                     onChange={Formik.handleChange}
                     onBlur={Formik.handleBlur}
                   >
@@ -241,8 +241,8 @@ export default function EditStudent({
                       })}
                   </Select>
                 </FormControl>
-                {Formik.touched.student_class &&
-                  Formik.errors.student_class && (
+                {Formik.touched.teacher_class &&
+                  Formik.errors.teacher_class && (
                     <p
                       style={{
                         color: "red",
@@ -251,7 +251,7 @@ export default function EditStudent({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.student_class}
+                      {Formik.errors.teacher_class}
                     </p>
                   )}
               </Box>
@@ -487,3 +487,4 @@ export default function EditStudent({
     </div>
   );
 }
+

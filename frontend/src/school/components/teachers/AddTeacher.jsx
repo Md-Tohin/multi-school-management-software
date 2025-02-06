@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   CardMedia,
@@ -9,112 +9,36 @@ import {
   MenuItem,
   Modal,
   Select,
+  TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
-import { studentEditSchema, studentSchema } from "../../../yupSchema/studentSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
-import axios from "axios";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { teacherSchema } from "../../../yupSchema/teacherSchema";
 import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-export default function EditStudent({
-  classes,
-  selectedStudent,
-  openEditModal,
-  setOpenEditModal,
-  fetchStudent,
+export default function AddTeacher({
+  openAddModal,
+  setOpenAddModal,
+  fetchTeacher,
   setHandleMessageOpen,
   setMessage,
   setMessageType,
 }) {
-  console.log("edit data: ", selectedStudent);
-
-  const [open, setOpen] = useState(openEditModal);
+  const [classes, setClasses] = useState([]);
+  const [open, setOpen] = useState(openAddModal);
   const handleClose = () => {
     setOpen(false);
-    setOpenEditModal(false);
+    setOpenAddModal(false);
   };
-
-  const initialValues = {
-    name: selectedStudent.name,
-    email: selectedStudent.email,
-    student_class: selectedStudent.student_class._id,
-    age: selectedStudent.age,
-    gender: selectedStudent.gender,
-    guardian: selectedStudent.guardian,
-    guardian_phone: selectedStudent.guardian_phone,
-    address: selectedStudent.address,
-  };
-
-  //  FROM SUBMIT
-  const Formik = useFormik({
-    initialValues,
-    validationSchema: studentEditSchema,
-    onSubmit: async (values) => {  
-      const fd = new FormData();
-      if (file) {        
-        fd.append("image", file, file.name);
-      } 
-      fd.append("name", values.name);
-      fd.append("email", values.email);
-      fd.append("student_class", values.student_class);
-      fd.append("age", values.age);
-      fd.append("gender", values.gender);
-      fd.append("guardian", values.guardian);
-      fd.append("guardian_phone", values.guardian_phone);
-      fd.append("address", values.address);
-      fd.append("password", values.password);
-
-      axios.patch(`${import.meta.env.VITE_API_URL}/api/student/update/${selectedStudent._id}`, fd)
-      .then(resp => {
-        Formik.resetForm();
-          if(setOpenEditModal) setOpenEditModal(false);
-          if(fetchStudent) fetchStudent();
-          if(setMessage) setMessage(resp.data.message);
-          if(setMessageType) setMessageType("success");
-          if(setHandleMessageOpen) setHandleMessageOpen(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        if(setMessage) setMessage(error?.response?.data?.message);
-        if(setMessageType) setMessageType("error");
-        if(setHandleMessageOpen) setHandleMessageOpen(true);
-      })
-    },
-  });
-
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 800,
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    pl: 4,
-    pr: 4,
-    py: 4,
-  };
-
-  const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-  });
 
   const [file, setFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(`/images/uploaded/student/${selectedStudent.student_image}`);
+  const [imageUrl, setImageUrl] = useState(null);
   //  PREVIEW IMAGE
   const addImage = (event) => {
     const file = event.target.files[0];
@@ -131,12 +55,117 @@ export default function EditStudent({
     }
   };
 
+  const initialValues = {
+    name: "",
+    email: "",
+    teacher_class: "",
+    age: "",
+    gender: "",
+    guardian: "",
+    guardian_phone: "",
+    password: "",
+    confirm_password: "",
+    address: "",
+  };
+
+  //  FROM SUBMIT
+  const Formik = useFormik({
+    initialValues,
+    validationSchema: teacherSchema,
+    onSubmit: async (values) => {
+      if (file) {
+        try {
+          console.log(values);
+          const fd = new FormData();
+
+          fd.append("image", file, file.name);
+          fd.append("name", values.name);
+          fd.append("email", values.email);
+          fd.append("teacher_class", values.teacher_class);
+          fd.append("age", values.age);
+          fd.append("gender", values.gender);
+          fd.append("guardian", values.guardian);
+          fd.append("guardian_phone", values.guardian_phone);
+          fd.append("address", values.address);
+          fd.append("password", values.password);
+
+          const response = await Axios({
+            ...SummaryApi.createTeacher,
+            data: fd,
+          });
+
+          console.log(response);
+          const { data: resp } = response;
+          if (resp.success) {
+            Formik.resetForm();
+            handleClearFile();
+            if (setOpenAddModal) setOpenAddModal(false);
+            if (fetchTeacher) fetchTeacher();
+            if (setMessage) setMessage(resp.message);
+            if (setMessageType) setMessageType("success");
+            if (setHandleMessageOpen) setHandleMessageOpen(true);
+          }
+        } catch (error) {
+          console.log(error);
+          if (setMessage) setMessage(error?.response?.data?.message);
+          if (setMessageType) setMessageType("error");
+          if (setHandleMessageOpen) setHandleMessageOpen(true);
+        }
+      } else {
+        setMessage("Please Add Teacher Image");
+        setMessageType("error");
+        setHandleMessageOpen(true);
+      }
+    },
+  });
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 800,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    pl: 4,
+    pr: 4,
+    py: 4,
+  };
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  async function fetchClass() {
+    try {
+      const response = await Axios({
+        ...SummaryApi.getClass,
+      });
+
+      if (response.data.success) {
+        setClasses(response.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  useEffect(() => {
+    fetchClass();
+  }, []);
+
   return (
     <div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={openEditModal}
+        open={openAddModal}
         onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
@@ -146,13 +175,16 @@ export default function EditStudent({
           },
         }}
       >
-        <Fade in={openEditModal}>
+        <Fade in={openAddModal}>
           <Box sx={style}>
             <Typography
               variant="h4"
-              sx={{ textAlign: "center", fontWeight: "600" }}
+              sx={{
+                textAlign: "center",
+                fontWeight: "600",
+              }}
             >
-              Edit Student
+              Add Teacher
             </Typography>
             <Box
               onSubmit={Formik.handleSubmit}
@@ -172,7 +204,7 @@ export default function EditStudent({
               <Box>
                 <TextField
                   name="name"
-                  label="Student Name"
+                  label="Teacher Name"
                   value={Formik.values.name}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
@@ -215,20 +247,18 @@ export default function EditStudent({
               </Box>
               <Box>
                 <FormControl fullWidth>
-                  <InputLabel id="student_class">Select Class</InputLabel>
+                  <InputLabel id="teacher_class">Select Class</InputLabel>
                   <Select
-                    labelId="student_class"
+                    labelId="teacher_class"
                     id="demo-simple-select"
-                    value={Formik.values.student_class}
+                    value={Formik.values.teacher_class}
                     label="Select Class"
-                    name="student_class"
+                    name="teacher_class"
                     onChange={Formik.handleChange}
                     onBlur={Formik.handleBlur}
                   >
                     {classes &&
-                      // eslint-disable-next-line react/prop-types
                       classes.length > 0 &&
-                      // eslint-disable-next-line react/prop-types
                       classes.map((item, index) => {
                         return (
                           <MenuItem
@@ -241,8 +271,8 @@ export default function EditStudent({
                       })}
                   </Select>
                 </FormControl>
-                {Formik.touched.student_class &&
-                  Formik.errors.student_class && (
+                {Formik.touched.teacher_class &&
+                  Formik.errors.teacher_class && (
                     <p
                       style={{
                         color: "red",
@@ -251,7 +281,7 @@ export default function EditStudent({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.student_class}
+                      {Formik.errors.teacher_class}
                     </p>
                   )}
               </Box>
@@ -477,7 +507,7 @@ export default function EditStudent({
                     width: "30%",
                   }}
                 >
-                  Update
+                  Submit
                 </Button>
               </Box>
             </Box>
@@ -487,3 +517,4 @@ export default function EditStudent({
     </div>
   );
 }
+
