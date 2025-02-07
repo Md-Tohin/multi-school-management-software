@@ -15,7 +15,7 @@ import {
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
-import { teacherEditSchema, teacherSchema } from "../../../yupSchema/teacherSchema";
+import { teacherEditSchema } from "../../../yupSchema/teacherSchema";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import axios from "axios";
@@ -23,7 +23,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 
 export default function EditTeacher({
-  classes,
   selectedTeacher,
   openEditModal,
   setOpenEditModal,
@@ -43,11 +42,11 @@ export default function EditTeacher({
   const initialValues = {
     name: selectedTeacher.name,
     email: selectedTeacher.email,
-    teacher_class: selectedTeacher.teacher_class._id,
     age: selectedTeacher.age,
     gender: selectedTeacher.gender,
-    guardian: selectedTeacher.guardian,
-    guardian_phone: selectedTeacher.guardian_phone,
+    salary: selectedTeacher.salary,
+    qualification: selectedTeacher.qualification,
+    phone: selectedTeacher.phone,
     address: selectedTeacher.address,
   };
 
@@ -62,11 +61,11 @@ export default function EditTeacher({
       } 
       fd.append("name", values.name);
       fd.append("email", values.email);
-      fd.append("teacher_class", values.teacher_class);
       fd.append("age", values.age);
       fd.append("gender", values.gender);
-      fd.append("guardian", values.guardian);
-      fd.append("guardian_phone", values.guardian_phone);
+      fd.append("salary", values.salary);
+      fd.append("qualification", values.qualification);
+      fd.append("phone", values.phone);
       fd.append("address", values.address);
       fd.append("password", values.password);
 
@@ -214,35 +213,16 @@ export default function EditTeacher({
                 )}
               </Box>
               <Box>
-                <FormControl fullWidth>
-                  <InputLabel id="teacher_class">Select Class</InputLabel>
-                  <Select
-                    labelId="teacher_class"
-                    id="demo-simple-select"
-                    value={Formik.values.teacher_class}
-                    label="Select Class"
-                    name="teacher_class"
-                    onChange={Formik.handleChange}
-                    onBlur={Formik.handleBlur}
-                  >
-                    {classes &&
-                      // eslint-disable-next-line react/prop-types
-                      classes.length > 0 &&
-                      // eslint-disable-next-line react/prop-types
-                      classes.map((item, index) => {
-                        return (
-                          <MenuItem
-                            key={item._id + "class" + index}
-                            value={item._id}
-                          >
-                            {item.class_text} ({item.class_num})
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-                {Formik.touched.teacher_class &&
-                  Formik.errors.teacher_class && (
+                <TextField
+                  name="phone"
+                  label="Phone"
+                  value={Formik.values.phone}
+                  onChange={Formik.handleChange}
+                  onBlur={Formik.handleBlur}
+                  style={{ width: "100%" }}
+                />
+                {Formik.touched.phone &&
+                  Formik.errors.phone && (
                     <p
                       style={{
                         color: "red",
@@ -251,10 +231,11 @@ export default function EditTeacher({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.teacher_class}
+                      {Formik.errors.phone}
                     </p>
                   )}
               </Box>
+
               <Box>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Gender</InputLabel>
@@ -309,14 +290,14 @@ export default function EditTeacher({
               </Box>
               <Box>
                 <TextField
-                  name="guardian"
-                  label="Guardian"
-                  value={Formik.values.guardian}
+                  name="qualification"
+                  label="Qualification"
+                  value={Formik.values.qualification}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
                   style={{ width: "100%" }}
                 />
-                {Formik.touched.guardian && Formik.errors.guardian && (
+                {Formik.touched.qualification && Formik.errors.qualification && (
                   <p
                     style={{
                       color: "red",
@@ -325,21 +306,21 @@ export default function EditTeacher({
                       fontSize: "14px",
                     }}
                   >
-                    {Formik.errors.guardian}
+                    {Formik.errors.qualification}
                   </p>
                 )}
               </Box>
               <Box>
                 <TextField
-                  name="guardian_phone"
-                  label="Guardian phone"
-                  value={Formik.values.guardian_phone}
+                  name="salary"
+                  label="Salary"
+                  value={Formik.values.salary}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
                   style={{ width: "100%" }}
                 />
-                {Formik.touched.guardian_phone &&
-                  Formik.errors.guardian_phone && (
+                {Formik.touched.salary &&
+                  Formik.errors.salary && (
                     <p
                       style={{
                         color: "red",
@@ -348,7 +329,7 @@ export default function EditTeacher({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.guardian_phone}
+                      {Formik.errors.salary}
                     </p>
                   )}
               </Box>

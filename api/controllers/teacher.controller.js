@@ -62,6 +62,7 @@ module.exports = {
           qualification: fields.qualification[0],
           address: fields.address[0],
           age: fields.age[0],
+          salary: fields.salary[0],
           gender: fields.gender[0],
           phone: fields.phone[0],
           teacher_image: originalFileName,

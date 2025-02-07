@@ -31,7 +31,6 @@ const Teachers = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
   const [teachers, setTeachers] = useState([]);
-  const [classes, setClasses] = useState([]);
   const [openConfirmBox, setOpenConfirmBox] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [actionOpen, setActionOpen] = useState(false);
@@ -84,7 +83,6 @@ const Teachers = () => {
         params,
       })
       .then((resp) => {
-        console.log(resp);
         if (resp.data.success) {
           setTeachers(resp.data.teachers);
         }
@@ -96,24 +94,6 @@ const Teachers = () => {
         setHandleMessageOpen(true);
       });
   }
-
-  async function fetchClass() {
-    try {
-      const response = await Axios({
-        ...SummaryApi.getClass,
-      });
-
-      if (response.data.success) {
-        setClasses(response.data.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  useEffect(() => {
-    fetchClass();
-  }, []);
 
   useEffect(() => {
     fetchTeacher();
@@ -206,7 +186,6 @@ const Teachers = () => {
 
       {openEditModal && (
         <EditTeacher
-          classes={classes}
           selectedTeacher={selectedTeacher}
           openEditModal={openEditModal}
           setOpenEditModal={setOpenEditModal}
@@ -246,31 +225,6 @@ const Teachers = () => {
             }}
             style={{ background: "white", width: "250px" }}
           />
-        </Box>
-
-        <Box>
-          <FormControl style={{ width: "250px" }}>
-            <InputLabel>Select Class</InputLabel>
-            <Select
-              label="Select Class"
-              value={params.teacher_class ? params.teacher_class : ""}
-              onChange={(e) => {
-                handleClass(e);
-              }}
-              style={{ background: "white" }}
-            >
-              <MenuItem value=""> Select Class </MenuItem>
-              {classes &&
-                classes.length > 0 &&
-                classes.map((item, index) => {
-                  return (
-                    <MenuItem key={item._id + "class" + index} value={item._id}>
-                      {item.class_text} ({item.class_num})
-                    </MenuItem>
-                  );
-                })}
-            </Select>
-          </FormControl>
         </Box>
       </Box>
 

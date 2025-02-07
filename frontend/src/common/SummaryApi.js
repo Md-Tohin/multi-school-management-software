@@ -53,6 +53,10 @@ const SummaryApi = {
         url: "/api/student/all",
         method: "get"
     },
+    createTeacher: {
+        url: "/api/teacher/register",
+        method: "post"
+    },
 }
 
 export default SummaryApi

@@ -69,7 +69,7 @@ module.exports = {
             {
               id: school._id,
               schoolId: school._id,
-              owner_name: school.owner_name,
+              // owner_name: school.owner_name,
               school_name: school.school_name,
               image_url: school.school_image,
               role: "SCHOOL",
@@ -83,7 +83,7 @@ module.exports = {
             message: "Login Success!",
             user: {
               id: school._id,
-              owner_name: school.owner_name,
+              // owner_name: school.owner_name,
               school_name: school.school_name,
               image_url: school.school_image,
               role: "SCHOOL",

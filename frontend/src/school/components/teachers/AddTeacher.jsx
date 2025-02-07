@@ -9,7 +9,6 @@ import {
   MenuItem,
   Modal,
   Select,
-  TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
@@ -30,7 +29,6 @@ export default function AddTeacher({
   setMessage,
   setMessageType,
 }) {
-  const [classes, setClasses] = useState([]);
   const [open, setOpen] = useState(openAddModal);
   const handleClose = () => {
     setOpen(false);
@@ -58,11 +56,11 @@ export default function AddTeacher({
   const initialValues = {
     name: "",
     email: "",
-    teacher_class: "",
     age: "",
     gender: "",
-    guardian: "",
-    guardian_phone: "",
+    salary: "",
+    qualification: "",
+    phone: "",
     password: "",
     confirm_password: "",
     address: "",
@@ -81,11 +79,11 @@ export default function AddTeacher({
           fd.append("image", file, file.name);
           fd.append("name", values.name);
           fd.append("email", values.email);
-          fd.append("teacher_class", values.teacher_class);
           fd.append("age", values.age);
           fd.append("gender", values.gender);
-          fd.append("guardian", values.guardian);
-          fd.append("guardian_phone", values.guardian_phone);
+          fd.append("salary", values.salary);
+          fd.append("qualification", values.qualification);
+          fd.append("phone", values.phone);
           fd.append("address", values.address);
           fd.append("password", values.password);
 
@@ -142,23 +140,6 @@ export default function AddTeacher({
     whiteSpace: "nowrap",
     width: 1,
   });
-
-  async function fetchClass() {
-    try {
-      const response = await Axios({
-        ...SummaryApi.getClass,
-      });
-
-      if (response.data.success) {
-        setClasses(response.data.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  useEffect(() => {
-    fetchClass();
-  }, []);
 
   return (
     <div>
@@ -246,33 +227,16 @@ export default function AddTeacher({
                 )}
               </Box>
               <Box>
-                <FormControl fullWidth>
-                  <InputLabel id="teacher_class">Select Class</InputLabel>
-                  <Select
-                    labelId="teacher_class"
-                    id="demo-simple-select"
-                    value={Formik.values.teacher_class}
-                    label="Select Class"
-                    name="teacher_class"
-                    onChange={Formik.handleChange}
-                    onBlur={Formik.handleBlur}
-                  >
-                    {classes &&
-                      classes.length > 0 &&
-                      classes.map((item, index) => {
-                        return (
-                          <MenuItem
-                            key={item._id + "class" + index}
-                            value={item._id}
-                          >
-                            {item.class_text} ({item.class_num})
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-                {Formik.touched.teacher_class &&
-                  Formik.errors.teacher_class && (
+                <TextField
+                  name="phone"
+                  label="Phone"
+                  value={Formik.values.phone}
+                  onChange={Formik.handleChange}
+                  onBlur={Formik.handleBlur}
+                  style={{ width: "100%" }}
+                />
+                {Formik.touched.phone &&
+                  Formik.errors.phone && (
                     <p
                       style={{
                         color: "red",
@@ -281,7 +245,7 @@ export default function AddTeacher({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.teacher_class}
+                      {Formik.errors.phone}
                     </p>
                   )}
               </Box>
@@ -339,14 +303,14 @@ export default function AddTeacher({
               </Box>
               <Box>
                 <TextField
-                  name="guardian"
-                  label="Guardian"
-                  value={Formik.values.guardian}
+                  name="qualification"
+                  label="Qualification"
+                  value={Formik.values.qualification}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
                   style={{ width: "100%" }}
                 />
-                {Formik.touched.guardian && Formik.errors.guardian && (
+                {Formik.touched.qualification && Formik.errors.qualification && (
                   <p
                     style={{
                       color: "red",
@@ -355,21 +319,21 @@ export default function AddTeacher({
                       fontSize: "14px",
                     }}
                   >
-                    {Formik.errors.guardian}
+                    {Formik.errors.qualification}
                   </p>
                 )}
               </Box>
               <Box>
                 <TextField
-                  name="guardian_phone"
-                  label="Guardian phone"
-                  value={Formik.values.guardian_phone}
+                  name="salary"
+                  label="Salary"
+                  value={Formik.values.salary}
                   onChange={Formik.handleChange}
                   onBlur={Formik.handleBlur}
                   style={{ width: "100%" }}
                 />
-                {Formik.touched.guardian_phone &&
-                  Formik.errors.guardian_phone && (
+                {Formik.touched.salary &&
+                  Formik.errors.salary && (
                     <p
                       style={{
                         color: "red",
@@ -378,7 +342,7 @@ export default function AddTeacher({
                         fontSize: "14px",
                       }}
                     >
-                      {Formik.errors.guardian_phone}
+                      {Formik.errors.salary}
                     </p>
                   )}
               </Box>

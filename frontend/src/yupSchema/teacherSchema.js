@@ -6,8 +6,9 @@ export const teacherSchema = yup.object({
     address: yup.string().required("Address field is required"),
     age: yup.number().required("Age field is required"),
     gender: yup.string().required("Gender field is required"),
-    guardian: yup.string().min(3, "Must contain 3 characters").required("Guardian field is required"),
-    guardian_phone: yup.string().min(11, "Must contain 11 characters").required("Guardian phone field is required"),
+    salary: yup.string().required("Salary field is required"),
+    qualification: yup.string().min(3, "Must contain 3 characters").required("Qualification field is required"),
+    phone: yup.string().min(11, "Must contain 11 characters").required("Phone field is required"),
     password: yup.string().min(6, "Password must contain 6 character").required("Password field is required"),
     confirm_password: yup.string().oneOf([yup.ref('password')], "Confirm password does not match.").required("Confirm password field is required")
 })
@@ -18,8 +19,9 @@ export const teacherEditSchema = yup.object({
     address: yup.string().required("Address field is required"),
     age: yup.number().required("Age field is required"),
     gender: yup.string().required("Gender field is required"),
-    guardian: yup.string().min(3, "Must contain 3 characters").required("Guardian field is required"),
-    guardian_phone: yup.string().min(11, "Must contain 11 characters").required("Guardian phone field is required"),
+    salary: yup.string().required("Salary field is required"),
+    qualification: yup.string().min(3, "Must contain 3 characters").required("Qualification field is required"),
+    phone: yup.string().min(11, "Must contain 11 characters").required("Phone field is required"),
     password: yup.string().min(6, "Password must contain 6 character"),
     confirm_password: yup.string().oneOf([yup.ref('password')], "Confirm password does not match.")
 })
