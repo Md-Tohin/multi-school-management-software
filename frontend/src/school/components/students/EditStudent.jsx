@@ -32,8 +32,6 @@ export default function EditStudent({
   setMessage,
   setMessageType,
 }) {
-  console.log("edit data: ", selectedStudent);
-
   const [open, setOpen] = useState(openEditModal);
   const handleClose = () => {
     setOpen(false);

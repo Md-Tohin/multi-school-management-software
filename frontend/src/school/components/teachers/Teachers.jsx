@@ -336,56 +336,23 @@ const Teachers = () => {
                   <Typography
                     sx={{
                       fontSize: "0.9rem",
+                      color: "#555",
+                      fontWeight: 600,
+                      letterSpacing: "0.3px",
+                    }}
+                  >
+                    {item.qualification}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "0.9rem",
                       color: "#888",
                       fontWeight: 600,
                       letterSpacing: "0.3px",
                     }}
                   >
                     {item.teacher_id}
-                  </Typography>
-                  <Box
-                    component={"div"}
-                    style={{
-                      marginTop: "1rem",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    {/* <button
-                      onClick={() => {
-                        setOpenEditModal(true);
-                        setSelectedTeacher(item);
-                      }}
-                      style={{
-                        padding: "2px 5px",
-                        background: "green",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <EditIcon />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setOpenConfirmBox(true);
-                        setDeleteId(item._id);
-                      }}
-                      style={{
-                        padding: "2px 5px",
-                        background: "red",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <DeleteIcon />
-                    </button> */}
-                  </Box>
+                  </Typography>                      
                 </Item>
               </Grid>
             ))}
