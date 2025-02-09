@@ -1,4 +1,4 @@
-const Attendance = require("../models/attendance.model.js");
+const Attendance = require("../models/attendance.mode.js");
 const moment = require('moment');
 
 module.exports = {
@@ -30,6 +30,26 @@ module.exports = {
     },
     //  GET ATTENDANCE
     getAttendance: async(req, res) => {
+        try {
+            const schoolId = req.user.schoolId;
+            const attendance = await Attendance.find({school: schoolId}).populate('student');
+            return res.status(200).json({
+                message: "Successfully fetch Attendance",
+                attendance,
+                error: false,
+                sccess: true
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "Internal Server Error [GET ATTENDANCE]",
+                error: true,
+                sccess: false
+            })
+        }
+    },
+
+    //  GET ATTENDANCE BY STUDENT ID
+    getAttendanceByStudentId: async(req, res) => {
         try {
             const schoolId = req.user.schoolId;
             const {studentId} = req.params;
