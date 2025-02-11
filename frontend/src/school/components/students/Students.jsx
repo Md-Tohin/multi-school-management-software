@@ -130,8 +130,8 @@ const Students = () => {
     }),
   }));
 
-  const handleDelete = () => { 
-    console.log("Deleted id : ", deleteId);       
+  const handleDelete = () => {
+    console.log("Deleted id : ", deleteId);
     axios
       .delete(`${import.meta.env.VITE_API_URL}/api/student/delete/${deleteId}`)
       .then((resp) => {
@@ -305,58 +305,60 @@ const Students = () => {
                   >
                     <MoreVertIcon />
                   </Box>
-                  { selectedStudentId === item._id && (
+                  {selectedStudentId === item._id && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "45px",
+                        right: "10px",
+                        border: "1px solid #d1d1d1",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        background: "white",
+                      }}
+                    >
                       <Box
-                    sx={{
-                      position: "absolute",
-                      top: "45px",
-                      right: "10px",
-                      border: "1px solid #d1d1d1",
-                      padding: "5px 10px",
-                      borderRadius: "5px",
-                      background: "white"
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "end",
-                        alignItems: "center",
-                        gap: 1,
-                        marginBottom: "5px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        setOpenEditModal(true);
-                        setSelectedStudent(item);
-                      }}
-                    >
-                      <EditIcon style={{ fontSize: "16px", fontWeight: 600 }} />
-                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-                        Edit
-                      </Typography>
+                        sx={{
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                          gap: 1,
+                          marginBottom: "5px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setOpenEditModal(true);
+                          setSelectedStudent(item);
+                        }}
+                      >
+                        <EditIcon
+                          style={{ fontSize: "16px", fontWeight: 600 }}
+                        />
+                        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                          Edit
+                        </Typography>
+                      </Box>
+                      <Box
+                        onClick={() => {
+                          setOpenConfirmBox(true);
+                          setDeleteId(item._id);
+                        }}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                          gap: 1,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <DeleteIcon
+                          style={{ fontSize: "16px", fontWeight: 600 }}
+                        />
+                        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                          Delete
+                        </Typography>
+                      </Box>
                     </Box>
-                    <Box
-                      onClick={() => {
-                        setOpenConfirmBox(true);
-                        setDeleteId(item._id);
-                      }}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "end",
-                        alignItems: "center",
-                        gap: 1,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <DeleteIcon
-                        style={{ fontSize: "16px", fontWeight: 600 }}
-                      />
-                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-                        Delete
-                      </Typography>
-                    </Box>
-                  </Box>
                   )}
                   <Box>
                     <img

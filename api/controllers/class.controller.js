@@ -48,6 +48,27 @@ module.exports = {
             })
         }
     },
+    //  GET CLASS WITH ID
+    getClassWithId: async(req, res) => {    
+        try {
+            const schoolId = req.user.schoolId;
+            const classId = req.params.id;
+            const classData = await Class.findOne({school: schoolId, _id: classId}).populate(['attendee']);
+            return res.status(200).json({
+                message: "Success in fetching class with id.",
+                data: classData,
+                error: false,
+                success: true
+            })            
+        } catch (error) {
+            console.log(error);            
+            return res.status(500).json({
+                message: "Internal Server Error [GET CLASS WITH ID].",
+                error: true,
+                success: false,
+            })
+        }
+    },
     //  UPDATE CLASS
     updateClassWithId: async(req, res) => {
         try {

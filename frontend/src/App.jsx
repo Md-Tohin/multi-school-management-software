@@ -28,6 +28,7 @@ import ExaminationsStudent from './student/components/examinations/ExaminationsS
 import ProtectedRoute from './guard/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 import AttendanceStudentList from './school/components/attendance/AttendanceStudentList'
+import AttendanceDetails from './school/components/attendance/AttendanceDetails'
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='attendance' element={<AttendanceStudentList />} />
+          <Route path='attendance/:id' element={<AttendanceDetails />} />
           <Route path='class' element={<Class />} />
           <Route path='examinations' element={<Examinations />} />
           <Route path='notice' element={<Notice />} />

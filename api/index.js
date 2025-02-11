@@ -13,6 +13,7 @@ const studentRouter = require('./routers/student.route.js')
 const teacherRouter = require('./routers/teacher.route.js')
 const scheduleRouter = require('./routers/schedule.route.js')
 const attendanceRouter = require('./routers/attendance.route.js')
+const examinationRouter = require('./routers/examination.route.js')
 
 const app = express();
 app.use(express.json());
@@ -56,6 +57,7 @@ app.use("/api/student", studentRouter);
 app.use("/api/teacher", teacherRouter);
 app.use("/api/schedule", scheduleRouter);
 app.use("/api/attendance", attendanceRouter);
+app.use("/api/examination", examinationRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

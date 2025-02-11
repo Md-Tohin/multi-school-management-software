@@ -23,6 +23,8 @@ import TableRow from "@mui/material/TableRow";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import axios from "axios";
+import MessageSnackbar from "../../../basicUtilityComponents/snackbar/MessageSnackbar";
+import { Link } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -45,14 +47,33 @@ export default function AttendanceStudentList() {
   const [selectedClass, setSelectedlass] = useState(null);
   const [openChangeAttendee, setOpenChangeAttendee] = useState(false);
   const [teachers, setTeachers] = useState([]);
+  const [selectedTeacher, setSelectedTeacher] = useState("");
+  const [attendee, setAttendee] = useState([]);
 
+  const fetchClassDetails = async (classId) => {
+    if (classId) {
+      await axios
+        .get(`${import.meta.env.VITE_API_URL}/api/class/single/${classId}`)
+        .then((resp) => {
+          if (resp.data.success) {
+            setAttendee(resp.data?.data?.attendee);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setMessage(e?.response?.data?.message);
+          setMessageType("error");
+          setHandleMessageOpen(true);
+        });
+    }
+  };
   function fetchTeacher() {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/teacher/fetch-with-query`, {
         params,
       })
       .then((resp) => {
-        if (resp.data.success) {          
+        if (resp.data.success) {
           setTeachers(resp.data.teachers);
         }
       })
@@ -63,7 +84,6 @@ export default function AttendanceStudentList() {
         setHandleMessageOpen(true);
       });
   }
-
   const [params, setParams] = useState({});
   const handleClass = (e) => {
     setParams((prevParams) => ({
@@ -72,7 +92,8 @@ export default function AttendanceStudentList() {
     }));
     setSelectedlass(e.target.value);
     fetchTeacher();
-    setOpenChangeAttendee(false)
+    cancelChangeClassAttendee(false);
+    fetchClassDetails(e.target.value);
   };
   const handleSearch = (e) => {
     setParams((prevParams) => ({
@@ -104,7 +125,6 @@ export default function AttendanceStudentList() {
         setHandleMessageOpen(true);
       });
   }
-
   async function fetchClass() {
     try {
       const response = await Axios({
@@ -118,7 +138,6 @@ export default function AttendanceStudentList() {
       console.log(err);
     }
   }
-
   useEffect(() => {
     fetchClass();
   }, []);
@@ -127,34 +146,80 @@ export default function AttendanceStudentList() {
     fetchStudent();
   }, [params]);
 
-  const [attendanceData, setAttendanceData] = useState({})
+  const [attendanceData, setAttendanceData] = useState({});
 
-  const fetchAttendanceForStudents = async(studentList) => {
-    const attendancePromises = studentList.map(student => fetchAttendanceForStudent(student._id))
-    const results = await Promise.all(attendancePromises);    
+  const fetchAttendanceForStudents = async (studentList) => {
+    const attendancePromises = studentList.map((student) =>
+      fetchAttendanceForStudent(student._id)
+    );
+    const results = await Promise.all(attendancePromises);
     const updateAttendanceData = {};
-    results.forEach(({studentId, attendancePercentage}) => {
-        updateAttendanceData[studentId] = attendancePercentage;
-    })
+    results.forEach(({ studentId, attendancePercentage }) => {
+      updateAttendanceData[studentId] = attendancePercentage;
+    });
     setAttendanceData(updateAttendanceData);
-  }
-
-  const fetchAttendanceForStudent = async(studentId) => {
+  };
+  const fetchAttendanceForStudent = async (studentId) => {
     try {
-        const response =  await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/fetch/${studentId}`)
-        const attendanceRecords = response.data.attendance;
-        const totalClasses = attendanceRecords.length;        
-        const presentCount = attendanceRecords.filter(
-            (record) => record.status === "Present"
-        ).length;
-        const attendancePercentage = totalClasses > 0 ? (presentCount / totalClasses) * 100 : 0;
-        return {studentId, attendancePercentage};
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/attendance/fetch/${studentId}`
+      );
+      const attendanceRecords = response.data.attendance;
+      const totalClasses = attendanceRecords.length;
+      const presentCount = attendanceRecords.filter(
+        (record) => record.status === "Present"
+      ).length;
+      const attendancePercentage =
+        totalClasses > 0 ? (presentCount / totalClasses) * 100 : 0;
+      return { studentId, attendancePercentage };
     } catch (error) {
-        console.log(`Error fetching attendange for student ${studentId} : `, error);        
-        return {studentId, attendancePercentage: 0};
-    }    
-  }
-
+      console.log(
+        `Error fetching attendange for student ${studentId} : `,
+        error
+      );
+      return { studentId, attendancePercentage: 0 };
+    }
+  };
+  const changeClassAttendee = async () => {
+    try {
+      if (!selectedTeacher) {
+        setMessage("Please select any teacher");
+        setMessageType("error");
+        setHandleMessageOpen(true);
+        return;
+      }
+      axios
+        .patch(
+          `${import.meta.env.VITE_API_URL}/api/class/update/${selectedClass}`,
+          { attendee: selectedTeacher }
+        )
+        .then((resp) => {
+          if (resp.data.success) {
+            setSelectedTeacher(resp.data?.data?.attendee);
+            fetchClassDetails(resp.data?.data?._id);
+            setOpenChangeAttendee(false);
+            setMessage(resp.data.message);
+            setMessageType("success");
+            setHandleMessageOpen(true);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setMessage(e?.response?.data?.message);
+          setMessageType("error");
+          setHandleMessageOpen(true);
+        });
+    } catch (e) {
+      console.log(e);
+      setMessage(e?.response?.data?.message);
+      setMessageType("error");
+      setHandleMessageOpen(true);
+    }
+  };
+  const cancelChangeClassAttendee = () => {
+    setSelectedTeacher(selectedClass);
+    setOpenChangeAttendee(false);
+  };
   return (
     <div>
       <section
@@ -165,21 +230,16 @@ export default function AttendanceStudentList() {
           paddingBottom: "1rem",
         }}
       >
-        <h2>Attendance</h2>
-        <Button
-          onClick={() => setOpenAddModal(true)}
-          variant="contained"
-          sx={{
-            background: "#fff",
-            border: "1px solid green",
-            color: "#888",
-            borderRadius: "50px",
-            fontWeight: "600",
-          }}
-        >
-          Add Attendance
-        </Button>
+        <h2>Attendance</h2>        
       </section>
+
+      {handleMessageOpen && (
+        <MessageSnackbar
+          message={message}
+          messageType={messageType}
+          close={() => setHandleMessageOpen(false)}
+        />
+      )}
 
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -249,14 +309,14 @@ export default function AttendanceStudentList() {
                   <Typography sx={{ fontSize: "24px", fontWeight: "600" }}>
                     Select Attendee
                   </Typography>
-                  <Box sx={{padding: "0.5rem 0"}}>
+                  <Box sx={{ padding: "0.5rem 0" }}>
                     <FormControl style={{ width: "250px" }}>
                       <InputLabel>Select Teacher</InputLabel>
                       <Select
                         label="Select Teacher"
-                        // value={params.student_class ? params.student_class : ""}
+                        value={selectedTeacher}
                         onChange={(e) => {
-                          handleClass(e);
+                          setSelectedTeacher(e.target.value);
                         }}
                         style={{ background: "white" }}
                       >
@@ -277,11 +337,25 @@ export default function AttendanceStudentList() {
                     </FormControl>
                   </Box>
                   <Box>
-                    <Button variant="contained">Submit</Button>
-                    <Button  variant="contained" sx={{background: "tomato", marginLeft: "0.5rem"}}>Cancel</Button>
+                    <Button onClick={changeClassAttendee} variant="contained">
+                      {attendee?._id ? "Update" : "Submit"}
+                    </Button>
+                    <Button
+                      onClick={cancelChangeClassAttendee}
+                      variant="contained"
+                      sx={{ background: "tomato", marginLeft: "0.5rem" }}
+                    >
+                      Cancel
+                    </Button>
                   </Box>
-                  <Box sx={{paddingBottom: "1rem", paddingTop: "1rem", marginX: "1rem" }}>                    
-                  <hr />
+                  <Box
+                    sx={{
+                      paddingBottom: "1rem",
+                      paddingTop: "1rem",
+                      marginX: "1rem",
+                    }}
+                  >
+                    <hr />
                   </Box>
                 </Box>
               )}
@@ -302,11 +376,14 @@ export default function AttendanceStudentList() {
                     <Typography sx={{ fontWeight: "500" }}>
                       Attendee Teacher
                     </Typography>
-                    <Typography>Md. Mahbubur Rahman</Typography>
+                    <Typography>{attendee?.name}</Typography>
                   </Box>
                   <Box sx={{ padding: "0.5rem 0" }}>
                     <Button
-                      onClick={() => setOpenChangeAttendee(true)}
+                      onClick={() => {
+                        setSelectedTeacher(attendee?._id);
+                        setOpenChangeAttendee(true);
+                      }}
                       variant="outlined"
                     >
                       CHANGE ATTTENDEE
@@ -344,7 +421,7 @@ export default function AttendanceStudentList() {
                     {students &&
                       students.map((student) => (
                         <TableRow
-                          key={student.name}
+                          key={student._id}
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
                           }}
@@ -360,11 +437,11 @@ export default function AttendanceStudentList() {
                             {student.student_class?.class_text}
                           </TableCell>
                           <TableCell align="right">
-                            {
-                                attendanceData[student._id] !== undefined ? `${attendanceData[student._id].toFixed(2)}%` : "No Data"
-                            }
+                            {attendanceData[student._id] !== undefined
+                              ? `${attendanceData[student._id].toFixed(2)}%`
+                              : "No Data"}
                           </TableCell>
-                          <TableCell align="right">{student.name}</TableCell>
+                          <TableCell align="right"><Link to={`/school/attendance/${student._id}`}>Details</Link></TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
