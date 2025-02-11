@@ -53,7 +53,6 @@ module.exports = {
         try {
             const schoolId = req.user.schoolId;
             const classId = req.params.id;
-            console.log("class id: ", classId);
             
             const examinations = await Examination.find({school: schoolId, class: classId}).populate(['subject'])
             return res.status(200).json({

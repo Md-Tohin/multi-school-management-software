@@ -37,7 +37,7 @@ export default function AddExamination({
 }) {
   const [subjects, setSubjects] = useState([]);
 
-  async function fetchData() {   
+  async function fetchData() {
     await axios
       .get(`${import.meta.env.VITE_API_URL}/api/subject/all`)
       .then((resp) => {
@@ -74,7 +74,6 @@ export default function AddExamination({
     initialValues,
     validationSchema: examinationSchema,
     onSubmit: async (values) => {
-      console.log("Submited Value ",values);      
       axios
         .post(`${import.meta.env.VITE_API_URL}/api/examination/create`, {
           ...values,
@@ -153,12 +152,13 @@ export default function AddExamination({
                     <DatePicker
                       label="Date"
                       value={
-                        Formik.values.examDate ? dayjs(Formik.values.examDate) : null
+                        Formik.values.examDate
+                          ? dayjs(Formik.values.examDate)
+                          : null
                       }
                       onChange={(newValue) => {
                         Formik.setFieldValue("examDate", newValue);
                       }}
-               
                       sx={{ width: "100%" }}
                     />
                   </DemoContainer>
@@ -241,7 +241,7 @@ export default function AddExamination({
 
               <Box
                 style={{
-                    marginTop: "1rem",
+                  marginTop: "1rem",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",

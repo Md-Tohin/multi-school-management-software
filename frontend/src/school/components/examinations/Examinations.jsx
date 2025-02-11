@@ -20,6 +20,9 @@ import {
 import EditExamination from "./EditExamination";
 import AddExamination from "./AddExamination";
 import axios from "axios";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmBox from "../../../basicUtilityComponents/ConfirmBox";
 
 const Examinations = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -29,8 +32,10 @@ const Examinations = () => {
   const [messageType, setMessageType] = useState("success");
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
-  const [editId, setEditId] = useState("");
   const [examinations, setExaminations] = useState([]);
+  const [selectedExamination, setSelectedExamination] = useState([]);
+  const [openConfirmBox, setOpenConfirmBox] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   async function fetchClass() {
     try {
@@ -53,13 +58,14 @@ const Examinations = () => {
 
   async function fetchExamination() {
     if (selectedClass) {
-      console.log("Fetch Examinagtions: ", selectedClass);
-      
-      await axios.get(`${import.meta.env.VITE_API_URL}/api/examination/fetch-with-class/${selectedClass}`)
+      await axios
+        .get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/examination/fetch-with-class/${selectedClass}`
+        )
         .then((resp) => {
-          console.log(resp);
-          
-          if (resp.data.success) {           
+          if (resp.data.success) {
             setExaminations(resp.data?.examinations);
           }
         })
@@ -75,6 +81,37 @@ const Examinations = () => {
   useEffect(() => {
     fetchExamination();
   }, [selectedClass]);
+
+  const handleDelete = () => {
+    axios
+      .delete(
+        `${import.meta.env.VITE_API_URL}/api/examination/delete/${deleteId}`
+      )
+      .then((resp) => {
+        fetchExamination();
+        if (setMessage) setMessage(resp.data.message);
+        if (setMessageType) setMessageType("success");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        if (setMessage) setMessage(e?.response?.data?.message);
+        if (setMessageType) setMessageType("error");
+        if (setHandleMessageOpen) setHandleMessageOpen(true);
+        setOpenConfirmBox(false);
+      });
+  };
+
+  const dateFormat = (dateData) => {
+    const date = new Date(dateData);
+    return (
+      date.getDate() + `-` + (+date.getMonth() + 1) + "-" + date.getFullYear()
+    );
+    // const dateHours = date.getHours();
+    // const dateMinutes = date.getMinutes();
+    // return `${dateHours}:${dateMinutes < 10 ? '0' : ''}${dateMinutes}`
+  };
 
   return (
     <div>
@@ -98,7 +135,7 @@ const Examinations = () => {
             fontWeight: "600",
           }}
         >
-          Add Exam
+          Add Examination
         </Button>
       </section>
 
@@ -128,10 +165,20 @@ const Examinations = () => {
           setOpenEditModal={setOpenEditModal}
           fetchExamination={fetchExamination}
           selectedClass={selectedClass}
-          editId={editId}
+          editId={selectedExamination?._id}
           setHandleMessageOpen={setHandleMessageOpen}
           setMessage={setMessage}
           setMessageType={setMessageType}
+          selectedExamination={selectedExamination}
+        />
+      )}
+
+      {openConfirmBox && (
+        <ConfirmBox
+          openConfirmBox={openConfirmBox}
+          setOpenConfirmBox={setOpenConfirmBox}
+          cancel={() => setOpenConfirmBox(false)}
+          confirm={handleDelete}
         />
       )}
 
@@ -159,34 +206,105 @@ const Examinations = () => {
       </Box>
 
       <Box component={"div"}>
-      <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: "600" }}>Exam Date</TableCell>
-                      <TableCell sx={{ fontWeight: "600" }} align="right">Subject</TableCell>
-                      <TableCell sx={{ fontWeight: "600" }} align="right">Exam Type</TableCell>                      
-                      <TableCell sx={{ fontWeight: "600" }} align="right">Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {examinations &&
-                      examinations.map((examination, index) => (
-                        <TableRow
-                          key={examination._id+"exam"+index}
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "600" }}>Exam Date</TableCell>
+                <TableCell sx={{ fontWeight: "600" }} align="right">
+                  Subject
+                </TableCell>
+                <TableCell sx={{ fontWeight: "600" }} align="right">
+                  Exam Type
+                </TableCell>
+                <TableCell sx={{ fontWeight: "600" }} align="right">
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {examinations &&
+                examinations.map((examination, index) => (
+                  <TableRow
+                    key={examination._id + "exam" + index}
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {dateFormat(examination.examDate)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {examination?.subject?.subject_name} (
+                      {examination?.subject?.subject_codename})
+                    </TableCell>
+                    <TableCell align="right">{examination.examType}</TableCell>
+                    <TableCell align="right">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Box
                           sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
+                            display: "flex",
+                            justifyContent: "end",
+                            alignItems: "center",
+                            gap: 0.5,
+                            cursor: "pointer",
+                            border: "1px solid rgb(55, 216, 82)",
+                            background: "#3df75c",
+                            color: "white",
+                            padding: "3px 8px",
+                            borderRadius: "5px",
+                          }}
+                          onClick={() => {
+                            setOpenEditModal(true);
+                            setSelectedExamination(examination);
                           }}
                         >
-                          <TableCell component="th" scope="row">{examination.examDate}</TableCell>
-                          <TableCell align="right">{examination?.subject?.subject_name} ({examination?.subject?.subject_codename})</TableCell>
-                          <TableCell align="right">{examination.examType}</TableCell>                
-                          <TableCell align="right">Actions</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                          <EditIcon
+                            style={{ fontSize: "16px", fontWeight: 600 }}
+                          />
+                          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                            Edit
+                          </Typography>
+                        </Box>
+                        <Box
+                          onClick={() => {
+                            setOpenConfirmBox(true);
+                            setDeleteId(examination._id);
+                          }}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "end",
+                            alignItems: "center",
+                            gap: 0.5,
+                            cursor: "pointer",
+                            border: "1px solid rgb(221, 53, 53)",
+                            background: "rgba(248, 66, 66, 0.7)",
+                            color: "white",
+                            padding: "3px 8px",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <DeleteIcon
+                            style={{ fontSize: "16px", fontWeight: 600 }}
+                          />
+                          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                            Delete
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     </div>
   );
