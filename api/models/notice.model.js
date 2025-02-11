@@ -15,8 +15,7 @@ const noticeSchema = new mongoose.Schema({
     },
     audience: {
         type: String,
-        enum: ['student', 'teacher'],
-        required: true
+        enum: ['student', 'teacher', "all"]
     },
     createdAt: {
         type: Date,

@@ -57,6 +57,10 @@ const SummaryApi = {
         url: "/api/teacher/register",
         method: "post"
     },
+    createNotice: {
+        url: "/api/notice/create",
+        method: "post"
+    },
 }
 
 export default SummaryApi
