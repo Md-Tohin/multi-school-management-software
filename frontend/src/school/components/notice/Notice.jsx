@@ -155,7 +155,7 @@ const Notice = () => {
         />
       )}
 
-      <Box sx={{ display: "flex", gap: 1.5 }}>
+      <Box sx={{ display: "flex", gap: 1.5, marginBottom: "1rem" }}>
         <Button
           variant={`${selectedTab === "all" ? "contained" : "outlined"}`}
           onClick={() => handleSortNotice("all")}
