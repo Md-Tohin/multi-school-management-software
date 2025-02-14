@@ -39,7 +39,7 @@ export default function EditSchoolDetailModal({
 
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(
-    `./images/uploaded/school/${school.school_image}`
+    `/images/uploaded/school/${school.school_image}`
   );
   //  PREVIEW IMAGE
   const addImage = (event) => {

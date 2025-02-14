@@ -153,7 +153,7 @@ export default function AddNotice({
                     padding: "10px",
                     fontFamily: "sans-serif",
                   }}
-                  placeholder="Address"
+                  placeholder="Message"
                   rows={5}
                   defaultValue={Formik.values.message}
                   onChange={Formik.handleChange}

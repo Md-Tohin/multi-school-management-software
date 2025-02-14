@@ -13,6 +13,10 @@ const schoolSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    school_name: {
+        type: String,
+        required: true
+    },
     school_image: {
         type: String,
         required: true

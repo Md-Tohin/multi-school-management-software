@@ -20,6 +20,7 @@ const Dashboard = () => {
       });
 
       if (response.data.success) {
+        console.log(response.data.school)
         setSchool(response.data.school);
       }
     } catch (err) {
@@ -70,7 +71,7 @@ const Dashboard = () => {
         {school && (
           <>
             <img
-              src={`./images/uploaded/school/${school?.school_image}`}
+              src={`/images/uploaded/school/${school?.school_image}`}
               alt="image"
               style={{ width: "100%", height: "100%", borderRadius: "10px" }}
             />

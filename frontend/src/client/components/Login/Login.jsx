@@ -11,13 +11,15 @@ import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
-  const {login} = React.useContext(AuthContext);    
+  const { login } = React.useContext(AuthContext);
   const [handleMessageOpen, setHandleMessageOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [messageType, setMessageType] = React.useState("success");
+  const [selectedRole, setSelectedRole] = React.useState("");
 
   const initialValues = {
     email: "",
@@ -28,56 +30,97 @@ export default function Login() {
   const Formik = useFormik({
     initialValues,
     validationSchema: loginSchema,
-    onSubmit: async(values) => {
-        try {
-            const response = await Axios({
-                ...SummaryApi.login,
-                data: {...values}
-            });    
-            const {data: resp} = response;
-            const token = await response.headers.get("Authorization");            
-            if(token){
-                localStorage.setItem("token", token);
-            }
-            const user = await resp?.user;            
-            if(user){
-                localStorage.setItem("user", JSON.stringify(user));
-                login(user);
-            }
-            Formik.resetForm();
-            setMessage(resp?.message);
-            setMessageType("success");
-            setHandleMessageOpen(true);
-            navigate('/school');
-        } catch (e) {
-            setMessage(e?.response?.data?.message);
-            setMessageType("error");
-            setHandleMessageOpen(true);
+    onSubmit: (values) => {
+      // try {
+        if (!selectedRole) {
+          setMessage("Select Role first. Then try again.");
+          setMessageType("error");
+          setHandleMessageOpen(true);
+          return
         }
+        let url;
+        if(selectedRole === "student") {
+          url = `${import.meta.env.VITE_API_URL}/api/student/login`
+        }
+        else if(selectedRole === "teacher") {
+          url = `${import.meta.env.VITE_API_URL}/api/teacher/login`
+        }
+        else if(selectedRole === "school") {
+          url = `${import.meta.env.VITE_API_URL}/api/school/login`
+        }
+        axios.post(url, {...values})
+        .then(response => {
+          const { data: resp } = response;
+          const token = response.headers.get("Authorization");
+          if (token) {
+            localStorage.setItem("token", token);
+          }
+          const user = resp?.user;
+          if (user) {
+            localStorage.setItem("user", JSON.stringify(user));
+            login(user);
+          }
+          Formik.resetForm();
+          setMessage(resp?.message);
+          setMessageType("success");
+          setHandleMessageOpen(true);
+          navigate(`/${selectedRole}`);
+        })
+        .catch(error => {
+          console.log(error);          
+          setMessage(error?.response?.data?.message);
+          setMessageType("error");
+          setHandleMessageOpen(true);
+        })
 
-    //   axios
-    //     .post(`${import.meta.env.VITE_API_URL}api/school/login`, { ...values })
-    //     .then((resp) => {
-    //         const token = resp.headers.get("Authorization");
-    //         console.log(token);
-            
-    //         if(token){
-    //             localStorage.setItem("token", token);
-    //         }
-    //         const user = resp?.data?.user;
-    //         if(user){
-    //             localStorage.setItem("user", JSON.stringify(user));
-    //         }
-    //       Formik.resetForm();
-    //       setMessage(resp?.data?.message);
-    //       setMessageType("success");
-    //       setHandleMessageOpen(true);
-    //     })
-    //     .catch((e) => {
-    //       setMessage(e?.response?.data?.message);
-    //       setMessageType("error");
-    //       setHandleMessageOpen(true);
-    //     });
+        // const response = await Axios({
+        //   ...SummaryApi.login,
+        //   data: { ...values },
+        // });
+        // const { data: resp } = response;
+        // const token = await response.headers.get("Authorization");
+        // if (token) {
+        //   localStorage.setItem("token", token);
+        // }
+        // const user = await resp?.user;
+        // if (user) {
+        //   localStorage.setItem("user", JSON.stringify(user));
+        //   login(user);
+        // }
+        // Formik.resetForm();
+        // setMessage(resp?.message);
+        // setMessageType("success");
+        // setHandleMessageOpen(true);
+        // navigate(`/${selectedRole}`);
+      // } catch (e) {
+      //   setMessage(e?.response?.data?.message);
+      //   setMessageType("error");
+      //   setHandleMessageOpen(true);
+      // }
+
+      //   axios
+      //     .post(`${import.meta.env.VITE_API_URL}api/school/login`, { ...values })
+      //     .then((resp) => {
+      //         const token = resp.headers.get("Authorization");
+      //         console.log(token);
+
+      //         if(token){
+      //             localStorage.setItem("token", token);
+      //         }
+      //         const user = resp?.data?.user;
+      //         if(user){
+      //             localStorage.setItem("user", JSON.stringify(user));
+      //         }
+      //       Formik.resetForm();
+      //       setMessage(resp?.data?.message);
+      //       setMessageType("success");
+      //       setHandleMessageOpen(true);
+      //     })
+      //     .catch((e) => {
+      //       setMessage(e?.response?.data?.message);
+      //       setMessageType("error");
+      //       setHandleMessageOpen(true);
+      //     });
     },
   });
 
@@ -163,6 +206,27 @@ export default function Login() {
             {Formik.errors.password}
           </p>
         )}
+
+        <Box sx={{ display: "flex", gap: 1.5, marginBottom: "1rem", paddingTop: "1rem" }}>
+          <Button
+            variant={`${selectedRole === "student" ? "contained" : "outlined"}`}
+            onClick={() => setSelectedRole("student")}
+          >
+           Student
+          </Button>          
+          <Button
+            variant={`${selectedRole === "teacher" ? "contained" : "outlined"}`}
+            onClick={() => setSelectedRole("teacher")}
+          >
+            Teacher
+          </Button>
+          <Button            
+            variant={`${selectedRole === "school" ? "contained" : "outlined"}`}
+            onClick={() => setSelectedRole("school")}
+          >
+            School
+          </Button>
+        </Box>
 
         <Button type="submit" variant="contained" style={{ marginTop: "15px" }}>
           Login

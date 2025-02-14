@@ -166,7 +166,7 @@ export default function EditNotice({
                     padding: "10px",
                     fontFamily: "sans-serif",
                   }}
-                  placeholder="Address"
+                  placeholder="Message"
                   rows={5}
                   defaultValue={Formik.values.message}
                   onChange={Formik.handleChange}
