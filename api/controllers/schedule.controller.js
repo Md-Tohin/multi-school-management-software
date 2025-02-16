@@ -26,6 +26,35 @@ module.exports = {
       });
     }
   },
+  //  GET SCHEDULES WITH TEASER ID
+  getScheduleWithTeacher: async (req, res) => {
+    try {
+
+      const filterQuery = {};
+      const schoolId = req.user.schoolId;
+      const teacherId = req.user.id;
+
+      filterQuery["school"] = schoolId;
+      filterQuery["teacher"] = teacherId;
+      const classId = req.params.id;  
+      if (classId !== "all") {
+        filterQuery["class"] = classId;
+      }      
+      const schedules = await Schedule.find(filterQuery).populate(['teacher', 'subject']);
+      return res.status(200).json({
+        message: "Schedule in fetching Schedules",
+        schedules,
+        error: false,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Internal Server Error [GET SCHEDULE WITH TEACHER]",
+        error: true,
+        success: false,
+      });
+    }
+  },
   //  CREATE SCHEDULE
   createSchedule: async (req, res) => {
     try {
