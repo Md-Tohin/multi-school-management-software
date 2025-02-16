@@ -38,10 +38,8 @@ module.exports = {
 
       if (req.query.audience === "student") {
         filterQuery["audience"] = { $ne: "teacher" }; 
-        console.log("student"); 
       } else if (req.query.audience === "teacher") {
         filterQuery["audience"] = { $ne: "student" }; 
-        console.log("teacher"); 
       }
 
       const notices = await Notice.find(filterQuery);
