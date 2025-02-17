@@ -25,7 +25,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import HomeIcon from '@mui/icons-material/Home';
-// import LogoutIcon from "@mui/icons-material/Logout";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
 
@@ -139,6 +139,11 @@ export default function Teacher() {
       link: "/teacher/notice",
       component: "Notice",
       icon: NotificationsIcon,
+    },
+    {
+      link: "/logout",
+      component: "Logout",
+      icon: LogoutIcon,
     },
   ];
 
