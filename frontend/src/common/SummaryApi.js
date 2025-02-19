@@ -29,6 +29,10 @@ const SummaryApi = {
         url: "/api/class/all",
         method: "get"
     },
+    getAttendeeClass: {
+        url: "/api/class/attendee",
+        method: "get"
+    },
     updateClass: {
         url: "/api/class/update",
         method: "patch"

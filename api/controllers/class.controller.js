@@ -24,6 +24,27 @@ module.exports = {
             })
         }
     },
+
+    //  GET ATTENDEE CLASS
+    getAttendeeClasses: async (req, res) => {
+        try {
+            const schoolId = req.user.schoolId;
+            const attendeeClasses = await Class.find({school: schoolId, attendee: req.user.id}).populate(['attendee']);
+            return res.status(200).json({
+                message: "Success in fetching Attendee's Classes.",
+                data: attendeeClasses,
+                error: false,
+                success: true
+            })            
+        } catch (error) {
+            console.log(error);            
+            return res.status(500).json({
+                message: "Internal Server Error [GET ATTENDEE CLASS].",
+                error: true,
+                success: false,
+            })
+        }
+    },
     //  CREATE CLASS
     createClass: async(req, res) => {
         try {
