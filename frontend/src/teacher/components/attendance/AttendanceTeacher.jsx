@@ -5,30 +5,30 @@ import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import {
   Button,
+  Checkbox,
   FormControl,
   MenuItem,
   Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 
-import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 
-const columns = [
-  // { field: "id", headerName: "attendance", width: 100 },
-  { field: "student_id", headerName: "Student Id", width: 150 },
-  { field: "name", headerName: "Student name", width: 350 },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function AttendanceTeacher() {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
   const [message, setMessage] = useState("");
-    const [messageType, setMessageType] = useState("success");
-    const [students, setStudents] = useState([]);
+  const [messageType, setMessageType] = useState("success");
+  const [students, setStudents] = useState([]);
 
   async function fetchClass() {
     try {
@@ -49,23 +49,15 @@ export default function AttendanceTeacher() {
     fetchClass();
   }, []);
 
-  const [rows, setRows] = useState([]);
-
   function fetchStudent() {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/student/fetch-with-query`, {
-        params: {student_class: selectedClass},
+        params: { student_class: selectedClass },
       })
       .then((resp) => {
         if (resp.data.success) {
-          console.log("Students : ", resp.data.students);          
+          console.log("Students : ", resp.data.students);
           setStudents(resp.data.students);
-          let customRows = resp?.data?.students.map((student, index) => ({
-            id: index,
-            student_id: student.student_id,
-            name: student.name
-          }));
-          setRows(customRows);          
         }
       })
       .catch((e) => {
@@ -129,37 +121,77 @@ export default function AttendanceTeacher() {
         </Box>
       )}
 
-      <Box component={"div"}>
-        <Paper sx={{ height: 400, width: "90%" }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-            sx={{ border: 0 }}
-          />
-        </Paper>
-      </Box>
+      {students && students.length > 0 ? (
+        <>
+          <Box component={"div"} sx={{ width: "80%" }}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "600", width: "20%" }}>
+                      Attendance Status
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontWeight: "600", width: "30%" }}
+                      align="center"
+                    >
+                      Student ID
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontWeight: "600", width: "50%" }}
+                      align="center"
+                    >
+                      Name
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {students &&
+                    students.map((student) => (
+                      <TableRow
+                        key={student._id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          <Checkbox {...label} />
+                        </TableCell>
+                        <TableCell align="center">
+                          {student.student_id}
+                        </TableCell>
+                        <TableCell align="center">{student.name}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
 
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{
-            marginTop: "1.5rem",
-            width: "20%",
-          }}
-        >
-          Submit
-        </Button>
-      </Box>
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                marginTop: "1.5rem",
+                width: "20%",
+              }}
+            >
+              Submit
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Alert severity="warning">Student Not Found in this class.</Alert>
+        </>
+      )}
     </div>
   );
 }
