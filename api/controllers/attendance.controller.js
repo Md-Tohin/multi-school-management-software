@@ -2,11 +2,49 @@ const Attendance = require("../models/attendance.mode.js");
 const moment = require('moment');
 
 module.exports = {
+    //  CHECK ATTENDANCE
+    checkAttendanceByDate: async(req, res) => {
+        try {
+            const { date, classId } = req.query;            
+            const schoolId = req.user.schoolId;
+
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0); // Set to 00:00:00
+
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999)
+
+            const attendance = await Attendance.find({ school: schoolId, date: { $gte: startOfDay, $lt: endOfDay }, class: classId }).populate(['student']);
+            
+            return res.status(200).json({
+                message: "Attendance Found",
+                attendance,
+                error: false,
+                sccess: true
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "Internal Server Error [CHECK ATTENDANCE]",
+                error: true,
+                sccess: false
+            })
+        }
+    },
     //  ADD ADDENDANCE
     markAttendance: async(req, res) => {
         try {
             const {studentId, date, status, classId } = req.body;
+            console.log("mark",studentId, date, status, classId);
+
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0); // Set to 00:00:00
+
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999)
+
             const schoolId = req.user.schoolId;
+            await Attendance.deleteMany({ school: schoolId, date: { $gte: startOfDay, $lt: endOfDay }, class: classId });
+
             const newAttendance = new Attendance({
                 school: schoolId,
                 student: studentId,
