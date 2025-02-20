@@ -25,7 +25,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import HomeIcon from '@mui/icons-material/Home';
-// import LogoutIcon from "@mui/icons-material/Logout";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
 
@@ -140,6 +140,11 @@ export default function Student() {
       component: "Notice",
       icon: NotificationsIcon,
     },
+    {
+      link: "/logout",
+      component: "Logout",
+      icon: LogoutIcon,
+    },
   ];
 
   const handleNavigation = (link) => {
@@ -234,7 +239,7 @@ export default function Student() {
           ))}
         </List>        
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, background: "#f2f2f2de", minHeight: "100vh" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

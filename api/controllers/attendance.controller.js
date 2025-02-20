@@ -34,8 +34,6 @@ module.exports = {
     markAttendance: async(req, res) => {
         try {
             const {studentId, date, status, classId } = req.body;
-            console.log("mark",studentId, date, status, classId);
-
             const startOfDay = new Date(date);
             startOfDay.setHours(0, 0, 0, 0); // Set to 00:00:00
 

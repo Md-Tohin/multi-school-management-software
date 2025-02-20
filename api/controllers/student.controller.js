@@ -192,7 +192,7 @@ module.exports = {
       const student = await Student.findOne({
         _id: id,
         school: schoolId,
-      }).select(["-password"]);
+      }).select(["-password"]).populate(['student_class']);
       if (student) {
         return res.status(200).json({
           success: true,

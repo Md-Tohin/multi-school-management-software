@@ -103,9 +103,7 @@ export default function AttendanceTeacher() {
       setMessageType("error");
       setHandleMessageOpen(true);
     }
-  };
-
- 
+  }; 
 
   function checkExistsStudentAttendance() {
     axios
