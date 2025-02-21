@@ -5,7 +5,7 @@ const { createNotice, getAllNotices, getNoticeById, updateNotice, deleteNotice }
 const router = Router();
 
 router.post("/create", authMiddleware(['SCHOOL']), createNotice);
-router.get("/all", authMiddleware(['SCHOOL','TEACHER']), getAllNotices);
+router.get("/all", authMiddleware(['SCHOOL','TEACHER', 'STUDENT']), getAllNotices);
 router.get("/single/:id", authMiddleware(['SCHOOL']), getNoticeById);
 router.patch("/update/:id", authMiddleware(['SCHOOL']), updateNotice);
 router.delete("/delete/:id", authMiddleware(['SCHOOL']), deleteNotice);
