@@ -124,7 +124,7 @@ export default function Student() {
   const navArr = [
     { link: "/", component: "Home", icon: HomeIcon },
     { link: "/student", component: "Your Details", icon: DashboardCustomizeIcon },
-    { link: "/student/schedule", component: "Schedule", icon: EventIcon },
+    { link: "/student/schedule", component: "Periods", icon: EventIcon },
     {
       link: "/student/attendance",
       component: "Attendande",

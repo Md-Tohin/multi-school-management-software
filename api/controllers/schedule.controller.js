@@ -7,7 +7,7 @@ module.exports = {
   getScheduleWithClass: async (req, res) => {
     try {
       const classId = req.params.id;      
-      const schoolId = req.user.schoolId;
+      const schoolId = req.user.schoolId;      
       const schedules = await Schedule.find({
         school: schoolId,
         class: classId,

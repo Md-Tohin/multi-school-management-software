@@ -52,7 +52,7 @@ export default function StudentDetails() {
           alignItems: "center",
           flexDirection: "column",
           background: "#fff",
-          width: "100%",
+          width: "80%",
           padding: "2rem 2rem",
           borderRadius: "10px",
           border: "1px solid #d1d1d1",

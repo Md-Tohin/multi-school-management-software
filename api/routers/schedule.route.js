@@ -5,7 +5,7 @@ const { createSchedule, updateScheduleWithId, deleteScheduleWithId, getScheduleW
 const router = Router();
 
 router.post("/create", authMiddleware(['SCHOOL']), createSchedule);
-router.get("/fetch-with-class/:id", authMiddleware(['SCHOOL']), getScheduleWithClass);
+router.get("/fetch-with-class/:id", authMiddleware(['SCHOOL', 'STUDENT']), getScheduleWithClass);
 router.get("/fetch-with-teacher/:id", authMiddleware(['TEACHER']), getScheduleWithTeacher);
 router.get("/fetch/:id", authMiddleware(['SCHOOL']), getScheduleWithId);
 router.patch("/update/:id", authMiddleware(['SCHOOL']), updateScheduleWithId);
