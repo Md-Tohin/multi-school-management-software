@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/create", authMiddleware(['SCHOOL']), newExamination);
 router.get("/all", authMiddleware(['SCHOOL']), getAllExaminations);
-router.get("/fetch-with-class/:id", authMiddleware(['SCHOOL', 'TEACHER']), getExaminationsByClass);
+router.get("/fetch-with-class/:id", authMiddleware(['SCHOOL', 'TEACHER', 'STUDENT']), getExaminationsByClass);
 router.patch("/update/:id", authMiddleware(['SCHOOL']), updateExaminationWithId);
 router.delete("/delete/:id", authMiddleware(['SCHOOL']), deleteExaminationWithId);
 
