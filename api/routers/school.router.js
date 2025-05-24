@@ -4,7 +4,7 @@ const { registerSchool, getAllSchool, loginSchool, updateSchool, getSchoolOwnDat
 
 const router = express.Router();
 
-router.post('/register',authMiddleware(['SCHOOL']), registerSchool);
+router.post('/register', registerSchool);
 router.get('/all', getAllSchool);
 router.post('/login', loginSchool);
 router.patch('/update', authMiddleware(['SCHOOL']), updateSchool);

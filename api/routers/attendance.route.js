@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/mark", authMiddleware(['TEACHER']), markAttendance);
 router.get("/all", authMiddleware(['SCHOOL']), getAttendance);
-router.get("/fetch/:studentId", authMiddleware(['SCHOOL']), getAttendanceByStudentId);
+router.get("/fetch/:studentId", authMiddleware(['SCHOOL', 'STUDENT']), getAttendanceByStudentId);
 router.patch("/check/:classId", authMiddleware(['SCHOOL']), checkAttendance);
 router.get("/check-exists", authMiddleware(['TEACHER']), checkAttendanceByDate);
 

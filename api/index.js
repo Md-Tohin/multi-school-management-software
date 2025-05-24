@@ -44,7 +44,7 @@ mongoose
 
 
 app.get("/", (req, res) => {
-  res.send("Server is running at port :");
+  res.send("Server is running at port : ");
 });
 app.get("/test", (req, res) => {
   res.send({ id: 1, message: "Hello World" });
